@@ -125,8 +125,11 @@
                 {% endif %}
                 <a href="{{ url_for('dashboard') }}"><i data-lucide="user-check" style="width: 16px;"></i> My Dashboard</a>
                 <a href="{{ url_for('dashboard') }}#orders"><i data-lucide="package" style="width: 16px;"></i> Order History</a>
-                <hr style="border: 0; border-top: 1px solid var(--border); margin: 4px 0;">
-                <a href="{{ url_for('logout') }}" style="color: #dc2626;"><i data-lucide="log-out" style="width: 16px;"></i> Logout</a>
+                <hr style="border: 0; border-top: 1px solid var(--border); margin: 6px 0;">
+                <a href="{{ url_for('logout') }}" style="color: #dc2626; font-weight: 700; background: #fee2e2; border-radius: 8px; margin: 4px 8px; padding: 8px 12px; display: flex; align-items: center; gap: 8px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                  Log Out
+                </a>
               </div>
             </div>
           {% else %}
