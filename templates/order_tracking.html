@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Track Your Order - Greeni5 Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 5rem; max-width: 900px;">
+
+  <!-- Lookup Search Card -->
+  <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm); margin-bottom: 2.5rem; text-align: center;">
+    <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">Track Your Plant Shipment</h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">
+      Enter your Greeni5 Order Number (e.g. <code>GRN-2026-8801</code>) to view live greenhouse dispatch and delivery status.
+    </p>
+
+    <form action="{{ url_for('track_lookup') }}" method="POST" style="display: flex; gap: 0.75rem; max-width: 500px; margin: 0 auto;">
+      <input type="text" name="order_number" required placeholder="Enter Order Number (e.g. GRN-2026-XXXX)" value="{{ order.order_number if order else '' }}" style="flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-full); font-size: 0.95rem;">
+      <button type="submit" class="btn btn-primary">
+        <i data-lucide="search" style="width: 16px;"></i> Track
+      </button>
+    </form>
+  </div>
+
+  {% if order %}
+    <!-- Active Order Tracking Card -->
+    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow); margin-bottom: 2rem;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Tracking Order</span>
+          <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--primary);">#{{ order.order_number }}</h2>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Placed on: {{ order.created_at }}</span>
+        </div>
+
+        <div>
+          <span class="badge {{ order.order_status | status_badge }}" style="font-size: 0.9rem; padding: 8px 16px;">
+            Status: {{ order.order_status }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Stepper / Timeline Visual -->
+      {% if is_rejected %}
+        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius); padding: 1.5rem; text-align: center; color: #991b1b; margin-bottom: 2rem;">
+          <i data-lucide="alert-triangle" style="width: 36px; height: 36px; margin: 0 auto 0.5rem auto; color: #dc2626;"></i>
+          <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">Order Rejected / Cancelled</h3>
+          <p style="font-size: 0.9rem;">This order has been cancelled. If any payment was deducted, a full refund is processed within 3-5 business days.</p>
+        </div>
+      {% else %}
+        <div class="stepper-wrap">
+          <div class="stepper-row">
+            <div class="stepper-line">
+              {% set progress_pct = (current_stage_idx / (stages | length - 1) * 100) if current_stage_idx >= 0 else 0 %}
+              <div class="stepper-line-progress" style="width: {{ progress_pct }}%;"></div>
+            </div>
+
+            {% for stage in stages %}
+              {% set is_done = loop.index0 < current_stage_idx %}
+              {% set is_current = loop.index0 == current_stage_idx %}
+              <div class="step-node {{ 'completed' if is_done or is_current else '' }} {{ 'active' if is_current else '' }}">
+                <div class="step-icon-bubble">
+                  {% if is_done %}
+                    <i data-lucide="check" style="width: 20px;"></i>
+                  {% elif stage == 'Pending' %}
+                    <i data-lucide="clock" style="width: 20px;"></i>
+                  {% elif stage == 'Accepted' %}
+                    <i data-lucide="check-circle" style="width: 20px;"></i>
+                  {% elif stage == 'Packed' %}
+                    <i data-lucide="package" style="width: 20px;"></i>
+                  {% elif stage == 'Shipped' %}
+                    <i data-lucide="truck" style="width: 20px;"></i>
+                  {% elif stage == 'Delivered' %}
+                    <i data-lucide="home" style="width: 20px;"></i>
+                  {% endif %}
+                </div>
+                <h4 class="step-title">{{ stage }}</h4>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Order Details Breakdown -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+        <div style="background: var(--bg-surface-alt); padding: 1.25rem; border-radius: var(--radius);">
+          <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Shipping Address</h4>
+          <p style="font-size: 0.875rem; color: #475569; line-height: 1.5;">
+            <strong>{{ order.customer_name }}</strong><br>
+            {{ order.shipping_address }}<br>
+            {{ order.city }}, {{ order.state }} - {{ order.pincode }}<br>
+            Phone: {{ order.customer_phone }}
+          </p>
+        </div>
+
+        <div style="background: var(--bg-surface-alt); padding: 1.25rem; border-radius: var(--radius);">
+          <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Order Overview</h4>
+          <p style="font-size: 0.875rem; color: #475569; line-height: 1.5;">
+            Payment Method: <strong>{{ order.payment_method }}</strong><br>
+            Payment Status: <strong>{{ order.payment_status }}</strong><br>
+            Grand Total: <strong style="color: var(--primary-dark);">{{ order.total_amount | currency }}</strong><br>
+            {% if order.notes %}Special Notes: <em>"{{ order.notes }}"</em>{% endif %}
+          </p>
+        </div>
+      </div>
+
+      <!-- Items List -->
+      <div style="margin-top: 2rem;">
+        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">Items In This Order</h4>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          {% for item in items %}
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <img src="{{ item.image_url }}" alt="{{ item.plant_name }}" style="width: 48px; height: 48px; border-radius: 6px; object-fit: cover;">
+                <div>
+                  <h5 style="font-size: 0.925rem; font-weight: 700;">{{ item.plant_name }}</h5>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">Qty: {{ item.quantity }} × {{ item.price | currency }}</span>
+                </div>
+              </div>
+              <span style="font-size: 0.95rem; font-weight: 700;">{{ item.subtotal | currency }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Feature 3: Gift Badge if Order is a Gift -->
+      {% if order.is_gift %}
+        <div style="background: linear-gradient(135deg, #fdf2f8, #f0fdf4); border: 2px dashed #ec4899; border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-top: 1.5rem;">
+          <div style="font-weight: 800; color: #be185d; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+            <span>🎁 Living Plant Gift Order for: {{ order.gift_recipient_name or order.customer_name }}</span>
+          </div>
+          {% if order.gift_message %}
+            <div style="background: white; border: 1px solid #fbcfe8; border-radius: 8px; padding: 10px 14px; font-style: italic; color: #831843; font-size: 0.95rem; margin-top: 8px;">
+              &ldquo;{{ order.gift_message }}&rdquo;
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <!-- Feature 4: Living Plants Watering & Care Schedule -->
+      {% if watering_schedule %}
+        <div style="background: linear-gradient(135deg, rgba(240, 253, 244, 0.95), rgba(220, 252, 231, 0.65)); border: 1.5px solid #86efac; border-radius: var(--radius); padding: 1.5rem; margin-top: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 800; color: #14532d; display: flex; align-items: center; gap: 8px;">
+                <span>💧 Living Plant Care & Watering Calendar</span>
+              </h3>
+              <p style="font-size: 0.85rem; color: #166534; margin-top: 2px;">Your customized watering schedule so your plants thrive!</p>
+            </div>
+            {% if whatsapp_care_url %}
+              <a href="{{ whatsapp_care_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="background: #25d366; color: white; font-weight: 700; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);">
+                <span>📲 Sync Schedule to WhatsApp</span>
+              </a>
+            {% endif %}
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+            {% for plant in watering_schedule %}
+              <div style="background: #ffffff; border-radius: 10px; padding: 1rem; border: 1px solid #bbf7d0;">
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 0.65rem;">
+                  <img src="{{ plant.image_url }}" alt="{{ plant.plant_name }}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover;">
+                  <div style="flex: 1; min-width: 0;">
+                    <h4 style="font-size: 0.9rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ plant.plant_name }}</h4>
+                    <span style="font-size: 0.75rem; color: #059669; font-weight: 700;">{{ plant.frequency_label }}</span>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 4px; margin-bottom: 0.5rem;">
+                  {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+                    <span style="flex: 1; text-align: center; font-size: 0.675rem; padding: 2px 0; border-radius: 4px; font-weight: 700; {{ 'background: #15803d; color: white;' if day in plant.days else 'background: #f1f5f9; color: #94a3b8;' }}">
+                      {{ day }}
+                    </span>
+                  {% endfor %}
+                </div>
+                <div style="font-size: 0.75rem; color: #475569; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 0.4rem;">
+                  <span>💧 ~{{ plant.water_amount }}</span>
+                  <span>☀️ {{ plant.sunlight }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Courier Partner & AWB Tracking Card (Feature 7) -->
+      {% if order.tracking_number %}
+        <div style="background: #f0fdf4; border: 1.5px dashed #86efac; border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <div style="font-weight: 800; color: #166534; font-size: 1rem; display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="truck" style="width: 18px;"></i> Dispatched via {{ order.courier_name or 'Greeni5 Express Climate Transit' }}
+            </div>
+            <div style="font-size: 0.9rem; color: #334155; margin-top: 4px;">
+              AWB Tracking Code: <strong style="font-family: monospace; background: #dcfce7; padding: 2px 6px; border-radius: 4px; color: #14532d;">{{ order.tracking_number }}</strong>
+            </div>
+          </div>
+          {% if order.tracking_url %}
+            <a href="{{ order.tracking_url }}" target="_blank" class="btn btn-primary btn-sm">
+              <i data-lucide="external-link" style="width: 14px;"></i> Live Courier Tracking
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <!-- Customer Action Buttons: Print Invoice & Claim Replacement -->
+      <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; flex-wrap: wrap;">
+        <a href="{{ url_for('customer_invoice', order_number=order.order_number) }}" target="_blank" class="btn btn-outline btn-sm">
+          <i data-lucide="printer" style="width: 15px;"></i> Download / Print Tax Invoice
+        </a>
+        <a href="{{ url_for('customer_claim_replacement', order_id=order.id) }}" class="btn btn-sm" style="background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+          <i data-lucide="shield-alert" style="width: 15px;"></i> Claim 7-Day Transit Replacement
+        </a>
+      </div>
+
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}My Dashboard - Greeni5 Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem; padding-bottom: 5rem;">
+
+  <!-- User Welcome Top Bar -->
+  <div style="background: linear-gradient(135deg, #14532d, #15803d); color: #ffffff; border-radius: var(--radius-lg); padding: 2rem 2.5rem; margin-bottom: 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+    <div style="display: flex; align-items: center; gap: 1.25rem;">
+      <div style="width: 64px; height: 64px; border-radius: 50%; background: #ffffff; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800; border: 3px solid #86efac;">
+        {{ user.name[0] | upper }}
+      </div>
+      <div>
+        <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Welcome back, {{ user.name }}!</h1>
+        <p style="color: #bbf7d0; font-size: 0.9rem;">Customer Account • {{ user.email }} • Member since {{ user.created_at.split()[0] if user.created_at else '2026' }}</p>
+      </div>
+    </div>
+
+    {% if user.role == 'admin' %}
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary" style="background: #ffffff; color: #15803d;">
+        <i data-lucide="shield" style="width: 16px;"></i> Admin Control Center
+      </a>
+    {% endif %}
+  </div>
+
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem; align-items: start;">
+    
+    <!-- Left Column: Order History & Plant Care -->
+    <div id="orders">
+
+      <!-- Feature 4: My Living Plants Watering & Care Schedule -->
+      {% if watering_schedule %}
+        <div style="background: linear-gradient(135deg, rgba(240, 253, 244, 0.95), rgba(220, 252, 231, 0.65)); border: 1.5px solid #86efac; border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 style="font-size: 1.35rem; font-weight: 800; color: #14532d; display: flex; align-items: center; gap: 8px;">
+                <span>💧 My Plants Watering Calendar</span>
+              </h2>
+              <p style="font-size: 0.85rem; color: #166534; margin-top: 2px;">Acclimatized care & watering routine for your ordered green family.</p>
+            </div>
+            {% if whatsapp_care_url %}
+              <a href="{{ whatsapp_care_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="background: #25d366; color: white; font-weight: 700; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);">
+                <span>📲 Sync Schedule to WhatsApp</span>
+              </a>
+            {% endif %}
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+            {% for plant in watering_schedule %}
+              <div style="background: #ffffff; border-radius: 12px; padding: 1.1rem; border: 1px solid #bbf7d0; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 0.75rem;">
+                  <img src="{{ plant.image_url }}" alt="{{ plant.plant_name }}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover;">
+                  <div style="flex: 1; min-width: 0;">
+                    <h4 style="font-size: 0.95rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ plant.plant_name }}</h4>
+                    <span style="font-size: 0.75rem; color: #059669; font-weight: 700;">{{ plant.frequency_label }}</span>
+                  </div>
+                </div>
+
+                <!-- Days of week badges -->
+                <div style="display: flex; gap: 4px; margin-bottom: 0.6rem;">
+                  {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+                    <span style="flex: 1; text-align: center; font-size: 0.7rem; padding: 3px 0; border-radius: 4px; font-weight: 700; {{ 'background: #15803d; color: white;' if day in plant.days else 'background: #f1f5f9; color: #94a3b8;' }}">
+                      {{ day }}
+                    </span>
+                  {% endfor %}
+                </div>
+
+                <div style="font-size: 0.775rem; color: #475569; display: flex; justify-content: space-between; border-top: 1px dashed #e2e8f0; padding-top: 0.5rem;">
+                  <span>💧 Vol: ~{{ plant.water_amount }}</span>
+                  <span>☀️ {{ plant.sunlight }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
+        <i data-lucide="package" style="width: 22px; color: var(--primary);"></i> Order History
+      </h2>
+
+      {% if orders_with_items %}
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          {% for entry in orders_with_items %}
+            {% set ord = entry.order %}
+            {% set items = entry.order_items %}
+            <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: var(--shadow-sm);">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                <div>
+                  <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main);">Order #{{ ord.order_number }}</h3>
+                  <span style="font-size: 0.825rem; color: var(--text-muted);">Placed on {{ ord.created_at }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                  <span class="badge {{ ord.order_status | status_badge }}">{{ ord.order_status }}</span>
+                  <a href="{{ url_for('order_tracking', order_number=ord.order_number) }}" class="btn btn-outline btn-sm">
+                    <i data-lucide="map-pin" style="width: 14px;"></i> Track
+                  </a>
+                </div>
+              </div>
+
+              <!-- Order items preview -->
+              <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+                {% for itm in items %}
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                      <img src="{{ itm.image_url }}" alt="{{ itm.plant_name }}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover;">
+                      <div>
+                        <h4 style="font-size: 0.9rem; font-weight: 700;">{{ itm.plant_name }}</h4>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Qty: {{ itm.quantity }} × {{ itm.price | currency }}</span>
+                      </div>
+                    </div>
+                    <span style="font-weight: 700; font-size: 0.95rem;">{{ itm.subtotal | currency }}</span>
+                  </div>
+                {% endfor %}
+              </div>
+
+              <!-- Order summary footer -->
+              <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface-alt); padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.875rem;">
+                <span>Payment: <strong>{{ ord.payment_method }} ({{ ord.payment_status }})</strong></span>
+                <span>Grand Total: <strong style="color: var(--primary-dark); font-size: 1.05rem;">{{ ord.total_amount | currency }}</strong></span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div style="background: #ffffff; border: 1px dashed var(--border); border-radius: var(--radius); padding: 3rem; text-align: center;">
+          <i data-lucide="shopping-bag" style="width: 40px; height: 40px; color: var(--text-muted); margin: 0 auto 0.75rem auto;"></i>
+          <h3 style="font-size: 1.15rem; font-weight: 700;">No Orders Placed Yet</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Your green sanctuary awaits. Start browsing plants today!</p>
+          <a href="{{ url_for('catalog') }}" class="btn btn-primary btn-sm">Shop Catalog</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Right Column: Profile & Addresses -->
+    <div>
+      <!-- Profile Information Card -->
+      <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="user" style="width: 18px; color: var(--primary);"></i> Personal Profile
+        </h3>
+        
+        <form action="{{ url_for('update_profile') }}" method="POST">
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Full Name</label>
+            <input type="text" name="name" required value="{{ user.name }}" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem;">
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Email Address (Fixed)</label>
+            <input type="email" disabled value="{{ user.email }}" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; background: #f1f5f9; color: var(--text-muted);">
+          </div>
+          <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Contact Phone</label>
+            <input type="tel" name="phone" value="{{ user.phone or '' }}" placeholder="+91 98765 43210" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem;">
+          </div>
+          <button type="submit" class="btn btn-secondary btn-sm btn-block">Save Profile Changes</button>
+        </form>
+      </div>
+
+      <!-- Saved Addresses Card -->
+      <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: var(--shadow-sm);">
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="map-pin" style="width: 18px; color: var(--primary);"></i> Saved Addresses
+        </h3>
+
+        {% if addresses %}
+          <div style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.5rem;">
+            {% for addr in addresses %}
+              <div style="background: var(--bg-surface-alt); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem; position: relative;">
+                <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 0.25rem;">
+                  {{ addr.full_name }} {% if addr.is_default %}<span class="badge badge-stock-in" style="font-size: 0.65rem;">Default</span>{% endif %}
+                </div>
+                <div style="font-size: 0.825rem; color: #475569; line-height: 1.4;">
+                  {{ addr.address_line }}, {{ addr.city }}, {{ addr.state }} - {{ addr.pincode }}<br>
+                  Phone: {{ addr.phone }}
+                </div>
+                <form action="{{ url_for('delete_address', address_id=addr.id) }}" method="POST" style="margin-top: 0.5rem; text-align: right;">
+                  <button type="submit" style="background: none; border: none; color: #dc2626; font-size: 0.78rem; font-weight: 600; cursor: pointer;">Remove</button>
+                </form>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Add Address Collapse/Form -->
+        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--primary);">+ Add New Shipping Address</h4>
+        <form action="{{ url_for('add_address') }}" method="POST">
+          <div style="margin-bottom: 0.65rem;">
+            <input type="text" name="full_name" required placeholder="Recipient Name" style="width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;">
+          </div>
+          <div style="margin-bottom: 0.65rem;">
+            <input type="tel" name="phone" required placeholder="Recipient Phone" style="width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;">
+          </div>
+          <div style="margin-bottom: 0.65rem;">
+            <input type="text" name="address_line" required placeholder="House/Flat No., Street, Area" style="width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.65rem;">
+            <input type="text" name="city" required placeholder="City" style="width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;">
+            <input type="text" name="state" required placeholder="State" style="width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;">
+          </div>
+          <div style="margin-bottom: 0.75rem;">
+            <input type="text" name="pincode" required placeholder="Pincode" style="width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;">
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm btn-block">Add Address</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,133 @@
+﻿{% extends "admin/base_admin.html" %}
+
+{% block title %}Dashboard - Greeni5 Admin{% endblock %}
+{% block page_title %}Nursery Business Overview{% endblock %}
+
+{% block admin_content %}
+<!-- Metrics Grid -->
+<div class="metrics-grid">
+  <div class="metric-card">
+    <div class="metric-info">
+      <h4>Total Plants</h4>
+      <div class="metric-value">{{ total_plants }}</div>
+    </div>
+    <div class="metric-icon green">
+      <i data-lucide="sprout"></i>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-info">
+      <h4>Registered Customers</h4>
+      <div class="metric-value">{{ total_customers }}</div>
+    </div>
+    <div class="metric-icon blue">
+      <i data-lucide="users"></i>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-info">
+      <h4>Total Orders</h4>
+      <div class="metric-value">{{ total_orders }}</div>
+    </div>
+    <div class="metric-icon purple">
+      <i data-lucide="shopping-bag"></i>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-info">
+      <h4>Pending Orders</h4>
+      <div class="metric-value" style="color: #d97706;">{{ pending_orders }}</div>
+    </div>
+    <div class="metric-icon amber">
+      <i data-lucide="clock"></i>
+    </div>
+  </div>
+
+  <div class="metric-card" style="grid-column: 1 / -1;">
+    <div class="metric-info">
+      <h4>Total Nursery Revenue</h4>
+      <div class="metric-value" style="color: #15803d; font-size: 2.2rem;">{{ total_revenue | currency }}</div>
+      <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.25rem;">Excludes cancelled/rejected orders.</p>
+    </div>
+    <div class="metric-icon green" style="width: 60px; height: 60px; font-size: 1.8rem;">
+      <i data-lucide="trending-up"></i>
+    </div>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+  <!-- Recent Orders Table -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h3>Recent Customer Orders</h3>
+      <a href="{{ url_for('admin_orders') }}" class="btn btn-outline btn-sm">View All Orders</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ord in recent_orders %}
+            <tr>
+              <td style="font-weight: 700; color: var(--primary);">#{{ ord.order_number }}</td>
+              <td>
+                <div style="font-weight: 600;">{{ ord.customer_name }}</div>
+                <div style="font-size: 0.78rem; color: #64748b;">{{ ord.customer_phone }}</div>
+              </td>
+              <td style="font-weight: 700;">{{ ord.total_amount | currency }}</td>
+              <td>
+                <span class="badge {{ ord.order_status | status_badge }}">{{ ord.order_status }}</span>
+              </td>
+              <td>
+                <a href="{{ url_for('admin_orders') }}" class="btn btn-secondary btn-sm" title="View in orders manager">Manage</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Low Stock Alert Box -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h3 style="color: #b91c1c; display: flex; align-items: center; gap: 0.4rem;">
+        <i data-lucide="alert-circle" style="width: 18px;"></i> Low Stock Warnings
+      </h3>
+      <a href="{{ url_for('admin_plants') }}" class="btn btn-outline btn-sm">All Inventory</a>
+    </div>
+
+    <div style="padding: 1rem 1.5rem;">
+      {% if low_stock_plants %}
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          {% for lp in low_stock_plants %}
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+              <div>
+                <div style="font-weight: 700; font-size: 0.9rem;">{{ lp.name }}</div>
+                <span style="font-size: 0.8rem; color: #64748b;">{{ lp.category_name }}</span>
+              </div>
+              <div style="text-align: right;">
+                <span class="badge badge-discount">{{ lp.stock }} left</span>
+                <a href="{{ url_for('admin_plant_edit', plant_id=lp.id) }}" style="display: block; font-size: 0.75rem; color: var(--primary); font-weight: 600; margin-top: 2px;">Restock</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p style="color: #64748b; font-size: 0.9rem;">All inventory levels are adequately stocked (>10 items each).</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

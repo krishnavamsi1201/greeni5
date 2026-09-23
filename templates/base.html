@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Greeni5 - Online Plant Nursery & Botanical Garden{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%2315803d'/%3E%3Cpath d='M8 24h16M12 24c0-5.8 2.6-10.6 9.3-10.6M18.3 13.4C13.7 13.4 9.7 10 9 5.4c5.3 0 9.3 2.6 9.3 8Z' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/lucide.min.js') }}"></script>
+  <script>
+    if (typeof lucide === 'undefined') {
+      document.write('<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"><\/script>');
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  {% if active_flash_sale %}
+    <div class="top-notice-bar" style="background: linear-gradient(90deg, #15803d, #047857, #15803d); color: #ffffff; padding: 8px 1rem; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap;">
+      <span>⚡ <strong>{{ active_flash_sale.title }}:</strong> {{ active_flash_sale.banner_text or (active_flash_sale.discount_pct ~ '% OFF Sitewide!') }}</span>
+      <div style="background: rgba(0,0,0,0.25); padding: 3px 10px; border-radius: 20px; font-family: monospace; font-size: 0.95rem; letter-spacing: 1px; color: #fef08a; display: inline-flex; align-items: center; gap: 6px;">
+        <span style="font-size: 0.8rem; text-transform: uppercase;">Ends In:</span>
+        <span id="flash-sale-timer" data-endtime="{{ active_flash_sale.ends_at }}">00:00:00</span>
+      </div>
+      <a href="{{ url_for('catalog') }}" style="color: #ffffff; text-decoration: underline; font-size: 0.85rem;">Shop Sale &rarr;</a>
+    </div>
+  {% else %}
+    <div class="top-notice-bar">
+      <span>🌿 Nature Delivered Fresh • <span class="highlight">FREE Shipping</span> on orders over ₹999</span>
+      <span>•</span>
+      <span>7-Day Safe Replacement Guarantee</span>
+    </div>
+  {% endif %}
+
+  <!-- Main Navigation Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="nav-row">
+        <!-- Brand Logo -->
+        <a href="{{ url_for('index') }}" class="brand-logo">
+          <div class="leaf-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 20h10"/>
+              <path d="M10 20c0-4.4 2-8 7-8"/>
+              <path d="M14 12c-3.5 0-6.5-2.5-7-6 4 0 7 2 7 6Z"/>
+              <path d="M10 20v-3"/>
+            </svg>
+          </div>
+          <span>Greeni5</span>
+        </a>
+
+        <!-- Search Bar -->
+        <div class="search-box-wrap">
+          <form action="{{ url_for('catalog') }}" method="GET">
+            <input type="text" name="search" placeholder="Search indoor, outdoor, flowers, medicinal..." value="{{ request.args.get('search', '') }}">
+            <button type="submit" aria-label="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- Navigation Links -->
+        <ul class="nav-links">
+          <li>
+            <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> Home
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('catalog') }}" class="{{ 'active' if request.endpoint == 'catalog' else '' }}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg> Plant Catalog
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('care_tips') }}" class="{{ 'active' if request.endpoint == 'care_tips' else '' }}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg> Care Guide
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('plant_quiz') }}" class="{{ 'active' if request.endpoint == 'plant_quiz' else '' }}" style="background: rgba(22, 163, 74, 0.1); border: 1px solid rgba(22, 163, 74, 0.25); border-radius: 20px; padding: 5px 12px; color: #15803d; font-weight: 700;">
+              <span>🪴 Plant Quiz</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('track_lookup') }}" class="{{ 'active' if request.endpoint in ['track_lookup', 'order_tracking'] else '' }}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-5l-3-4h-5v10"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg> Track Order
+            </a>
+          </li>
+        </ul>
+
+        <!-- User & Cart Actions -->
+        <div class="nav-actions">
+          <!-- Wishlist Icon Badge -->
+          <a href="{{ url_for('catalog') }}#wishlist" class="icon-badge-btn" id="wishlist-nav-btn" title="Saved Plants / Wishlist">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+            </svg>
+            <span class="cart-count" id="wishlist-count" style="display: none; background: #e11d48;">0</span>
+          </a>
+
+          <!-- Shopping Cart Icon -->
+          <a href="{{ url_for('cart') }}" class="icon-badge-btn" title="View Shopping Cart">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span class="cart-count" style="display: {{ 'flex' if cart_count > 0 else 'none' }};">{{ cart_count }}</span>
+          </a>
+
+          <!-- User Menu -->
+          {% if current_user %}
+            <div class="user-menu-wrap">
+              <button class="user-menu-btn" type="button">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>{{ current_user.name.split()[0] }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="dropdown-menu">
+                {% if current_user.role == 'admin' %}
+                  <a href="{{ url_for('admin_dashboard') }}"><i data-lucide="layout-dashboard" style="width: 16px;"></i> Admin Portal</a>
+                {% endif %}
+                <a href="{{ url_for('dashboard') }}"><i data-lucide="user-check" style="width: 16px;"></i> My Dashboard</a>
+                <a href="{{ url_for('dashboard') }}#orders"><i data-lucide="package" style="width: 16px;"></i> Order History</a>
+                <hr style="border: 0; border-top: 1px solid var(--border); margin: 4px 0;">
+                <a href="{{ url_for('logout') }}" style="color: #dc2626;"><i data-lucide="log-out" style="width: 16px;"></i> Logout</a>
+              </div>
+            </div>
+          {% else %}
+            <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg> Login
+            </a>
+          {% endif %}
+
+          <button class="mobile-menu-toggle" type="button" aria-label="Toggle Menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container flash-container">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            <span>{{ message }}</span>
+            <button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; cursor:pointer; font-size: 1.2rem; color:inherit;">&times;</button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Main Content Block -->
+  <main style="flex: 1;">
+    {% block content %}{% endblock %}
+  </main>
+
+
+  <!-- Modern Nature Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Nursery Info -->
+        <div class="footer-col">
+          <div class="brand-logo" style="color: #ffffff; margin-bottom: 1rem;">
+            <div class="leaf-icon"><i data-lucide="sprout"></i></div>
+            <span>Greeni5</span>
+          </div>
+          <p style="color: #a7f3d0; font-size: 0.9rem; margin-bottom: 1.25rem;">
+            Greeni5 brings live, acclimatized greenhouse plants, organic vermicompost, and personalized horticulture guidance straight to your home.
+          </p>
+          <div style="display: flex; gap: 0.75rem;">
+            <span style="background: #1c4a2e; color: #86efac; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">🌿 100% Eco Packaging</span>
+            <span style="background: #1c4a2e; color: #86efac; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">🚚 Pan-India Delivery</span>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-col">
+          <h4>Explore Greeni5</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('catalog') }}">All Plant Catalog</a></li>
+            <li><a href="{{ url_for('care_tips') }}">Plant Doctor & Care Calculator</a></li>
+            <li><a href="{{ url_for('about') }}">Our Nursery Story</a></li>
+            <li><a href="{{ url_for('track_lookup') }}">Track Delivery</a></li>
+            <li><a href="{{ url_for('faq') }}">Frequently Asked Questions</a></li>
+          </ul>
+        </div>
+
+        <!-- Categories -->
+        <div class="footer-col">
+          <h4>Plant Categories</h4>
+          <ul class="footer-links">
+            {% for cat in nav_categories %}
+              <li><a href="{{ url_for('catalog', category=cat.slug) }}">{{ cat.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Contact & Newsletter -->
+        <div class="footer-col">
+          <h4>Nursery Helpline</h4>
+          <p style="color: #a7f3d0; font-size: 0.9rem; margin-bottom: 0.5rem;">📍 Botanical Garden Road, Sector 4, Bengaluru</p>
+          <p style="color: #a7f3d0; font-size: 0.9rem; margin-bottom: 0.5rem;">📞 +91 98765 43210 (9 AM - 7 PM)</p>
+          <p style="color: #a7f3d0; font-size: 0.9rem; margin-bottom: 1.25rem;">✉️ care@greeni5.com</p>
+          <a href="{{ url_for('contact') }}" class="btn btn-outline btn-sm" style="border-color: #86efac; color: #86efac;">
+            <i data-lucide="mail" style="width: 16px;"></i> Send Us a Message
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; {{ now_year }} Greeni5 Botanical Nursery Pvt Ltd. All rights reserved.</p>
+        <div style="display: flex; gap: 1.5rem;">
+          <a href="{{ url_for('about') }}">Privacy Policy</a>
+          <a href="{{ url_for('faq') }}">Terms of Service</a>
+          <a href="{{ url_for('login') }}">Admin Login</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

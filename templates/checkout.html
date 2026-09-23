@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Greeni5 Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem; padding-bottom: 5rem;">
+
+  <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 2rem;">Secure Checkout</h1>
+
+  <form action="{{ url_for('checkout') }}" method="POST">
+    <div style="display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 2.5rem; align-items: start;">
+      
+      <!-- Left Column: Shipping & Payment -->
+      <div>
+        
+        <!-- Saved Addresses (if logged in) -->
+        {% if saved_addresses %}
+          <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+              <i data-lucide="bookmark" style="width: 18px; color: var(--primary);"></i> Saved Shipping Addresses
+            </h3>
+            <select id="saved-address-selector" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; background: #ffffff;">
+              <option value="">-- Choose a saved address to autofill --</option>
+              {% for addr in saved_addresses %}
+                <option value="{{ addr.id }}"
+                        data-name="{{ addr.full_name }}"
+                        data-phone="{{ addr.phone }}"
+                        data-line="{{ addr.address_line }}"
+                        data-city="{{ addr.city }}"
+                        data-state="{{ addr.state }}"
+                        data-pin="{{ addr.pincode }}">
+                  {{ addr.full_name }} - {{ addr.address_line }}, {{ addr.city }} ({{ addr.pincode }})
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
+
+        <!-- Shipping Address Form -->
+        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-main); display: flex; align-items: center; gap: 0.6rem;">
+            <i data-lucide="map-pin" style="width: 20px; color: var(--primary);"></i> 1. Shipping & Contact Information
+          </h3>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Full Name *</label>
+              <input type="text" id="cust-name" name="customer_name" required value="{{ current_user.name if current_user else '' }}" placeholder="e.g. John Doe" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Phone Number *</label>
+              <input type="tel" id="cust-phone" name="customer_phone" required value="{{ current_user.phone if current_user else '' }}" placeholder="e.g. +91 91234 56789" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;">
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Email Address (For Order Updates) *</label>
+            <input type="email" name="customer_email" required value="{{ current_user.email if current_user else '' }}" placeholder="e.g. john@example.com" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;">
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Complete Delivery Street Address *</label>
+            <textarea id="cust-addr" name="shipping_address" rows="3" required placeholder="Flat/House no., Apartment name, Street, Landmark" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit;"></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">City *</label>
+              <input type="text" id="cust-city" name="city" required placeholder="Bengaluru" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">State *</label>
+              <input type="text" id="cust-state" name="state" required placeholder="Karnataka" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Postal Pincode *</label>
+              <input type="text" id="cust-pin" name="pincode" required placeholder="560038" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;">
+            </div>
+          </div>
+
+          {% if current_user %}
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--text-main); cursor: pointer;">
+              <input type="checkbox" name="save_address" value="1" checked>
+              <span>Save this address to my profile for future orders</span>
+            </label>
+          {% endif %}
+        </div>
+
+        <!-- Feature 3: Send as a Gift Option -->
+        <div style="background: rgba(240, 253, 244, 0.75); border: 2px dashed #16a34a; border-radius: var(--radius-lg); padding: 1.5rem 1.75rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+          <label style="display: flex; align-items: center; gap: 0.85rem; cursor: pointer; margin-bottom: 0;">
+            <input type="checkbox" id="gift-toggle" name="is_gift" value="1" style="width: 22px; height: 22px; accent-color: #15803d; cursor: pointer;">
+            <div>
+              <span style="font-weight: 800; font-size: 1.1rem; color: #15803d; display: flex; align-items: center; gap: 6px;">
+                🎁 Send as a Living Plant Gift (+₹49)
+              </span>
+              <p style="font-size: 0.85rem; color: #334155; margin-top: 2px;">Includes biodegradable protective gift box, decorative jute wrap & handwritten botanical greeting card!</p>
+            </div>
+          </label>
+
+          <div id="gift-fields-container" style="display: none; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px dashed rgba(22, 163, 74, 0.4);">
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 0.35rem;">Recipient's Name (Who should we address the card to?)</label>
+              <input type="text" id="gift-recipient-name" name="gift_recipient_name" placeholder="e.g. Priya Reddy / Sravan Kumar" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; background: #ffffff;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 0.35rem;">Personal Greeting Message (Printed inside box)</label>
+              <textarea name="gift_message" rows="2" placeholder="e.g. Happy Birthday! May this green plant bring fresh air, prosperity, and peace into your home!" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; background: #ffffff;"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Method Selection -->
+        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main); display: flex; align-items: center; gap: 0.6rem;">
+            <i data-lucide="credit-card" style="width: 20px; color: var(--primary);"></i> 2. Choose Payment Method
+          </h3>
+
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Cash on Delivery -->
+            <label style="display: flex; align-items: center; gap: 1rem; border: 2px solid var(--border); padding: 1.25rem; border-radius: var(--radius); cursor: pointer; transition: var(--transition);">
+              <input type="radio" name="payment_method" value="COD" checked style="width: 18px; height: 18px; accent-color: var(--primary);">
+              <div>
+                <div style="font-weight: 700; font-size: 1rem; color: var(--text-main);">Cash on Delivery (COD)</div>
+                <div style="font-size: 0.825rem; color: var(--text-muted);">Pay with cash or digital UPI upon doorstep delivery.</div>
+              </div>
+            </label>
+
+            <!-- Card / Online Simulation -->
+            <label style="display: flex; align-items: center; gap: 1rem; border: 2px solid var(--border); padding: 1.25rem; border-radius: var(--radius); cursor: pointer; transition: var(--transition);">
+              <input type="radio" name="payment_method" value="Online / Card" style="width: 18px; height: 18px; accent-color: var(--primary);">
+              <div>
+                <div style="font-weight: 700; font-size: 1rem; color: var(--text-main);">Online Payment / UPI / NetBanking</div>
+                <div style="font-size: 0.825rem; color: var(--text-muted);">Instant encrypted checkout. Instant confirmation.</div>
+              </div>
+            </label>
+          </div>
+
+          <div style="margin-top: 1.5rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Delivery Special Instructions (Optional)</label>
+            <input type="text" name="notes" placeholder="e.g. Leave with security guard, call before arriving..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Order Summary & Place Order -->
+      <div>
+        <div class="summary-card" style="position: sticky; top: 90px;">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">Order Review</h3>
+
+          <div style="max-height: 280px; overflow-y: auto; margin-bottom: 1.25rem; padding-right: 0.5rem;">
+            {% for item in cart.cart_items %}
+              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.85rem;">
+                <img src="{{ item.image_url }}" alt="{{ item.name }}" style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover;">
+                <div style="flex: 1; min-width: 0;">
+                  <h4 style="font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.name }}</h4>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">Qty: {{ item.quantity }} × {{ item.price | currency }}</span>
+                </div>
+                <span style="font-size: 0.95rem; font-weight: 700;">{{ item.subtotal | currency }}</span>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span style="font-weight: 600;">{{ cart.subtotal | currency }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Shipping</span>
+            {% if cart.shipping == 0 %}
+              <span style="font-weight: 700; color: #15803d;">FREE</span>
+            {% else %}
+              <span>{{ cart.shipping | currency }}</span>
+            {% endif %}
+          </div>
+
+          <div class="summary-row">
+            <span>Tax (5% GST)</span>
+            <span>{{ cart.tax | currency }}</span>
+          </div>
+
+          <div class="summary-row" id="gift-wrap-row" style="display: none;">
+            <span>🎁 Gift Box & Card</span>
+            <span style="font-weight: 700; color: #15803d;">+ ₹49.00</span>
+          </div>
+
+          <div class="summary-row total">
+            <span>Total Payable</span>
+            <span id="display-total" style="color: var(--primary-dark);" data-base-total="{{ cart.total }}">{{ cart.total | currency }}</span>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg btn-block" style="margin-top: 1.5rem;">
+            Place Order Now <i data-lucide="check" style="width: 18px;"></i>
+          </button>
+
+          <p style="font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 1rem;">
+            🔒 By clicking "Place Order Now", you agree to Greeni5's nursery safe shipping & refund policy.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </form>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const giftToggle = document.getElementById("gift-toggle");
+  const giftContainer = document.getElementById("gift-fields-container");
+  const giftRow = document.getElementById("gift-wrap-row");
+  const displayTotal = document.getElementById("display-total");
+  const baseTotal = parseFloat(displayTotal ? displayTotal.getAttribute("data-base-total") || "0" : "0");
+
+  if (giftToggle && displayTotal) {
+    giftToggle.addEventListener("change", () => {
+      if (giftToggle.checked) {
+        giftContainer.style.display = "block";
+        giftRow.style.display = "flex";
+        const newTotal = (baseTotal + 49).toFixed(2);
+        displayTotal.innerText = "₹" + Number(newTotal).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      } else {
+        giftContainer.style.display = "none";
+        giftRow.style.display = "none";
+        displayTotal.innerText = "₹" + Number(baseTotal).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      }
+    });
+  }
+});
+</script>
+{% endblock %}

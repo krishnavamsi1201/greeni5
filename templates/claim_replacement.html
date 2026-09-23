@@ -1,0 +1,64 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Claim Transit Plant Replacement - Greeni5 7-Day Guarantee{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 5rem; max-width: 720px;">
+  <div style="text-align: center; margin-bottom: 2.5rem;">
+    <div style="width: 64px; height: 64px; border-radius: 50%; background: #dcfce7; color: #15803d; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; box-shadow: 0 8px 20px rgba(22, 163, 74, 0.2);">
+      <i data-lucide="shield-check" style="width: 32px; height: 32px;"></i>
+    </div>
+    <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">
+      Greeni5 7-Day Plant Guarantee
+    </h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
+      Did your plant arrive stressed, wilted, or damaged during transit? Don't worry! Upload a quick photo and our greenhouse botanist will review and approve a free replacement immediately.
+    </p>
+  </div>
+
+  <div class="glass-card" style="padding: 2.5rem; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(14px); border: 1.5px solid var(--primary-border);">
+    <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <div style="font-size: 0.8rem; color: #166534; font-weight: 600;">ORDER DETAILS</div>
+        <div style="font-weight: 800; color: #14532d; font-size: 1.1rem;">#{{ order.order_number }}</div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 0.8rem; color: #64748b;">Customer: {{ order.customer_name }}</div>
+        <div style="font-size: 0.8rem; color: #64748b;">Status: {{ order.order_status }}</div>
+      </div>
+    </div>
+
+    <form action="{{ url_for('customer_claim_replacement', order_id=order.id) }}" method="POST" enctype="multipart/form-data">
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-main);">
+          1. Select the Damaged Plant:
+        </label>
+        <select name="plant_name" class="form-control" style="padding: 10px; width: 100%; border-radius: 8px; border: 1.5px solid var(--border);" required>
+          {% for item in items %}
+            <option value="{{ item.plant_name }}">{{ item.plant_name }} ({{ item.variant_name or 'Standard' }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-main);">
+          2. What happened? (Describe Transit Condition):
+        </label>
+        <textarea name="reason" rows="3" class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1.5px solid var(--border);" placeholder="e.g. Broken main stem during courier transit, dried yellow leaves on unboxing..." required></textarea>
+      </div>
+
+      <div style="margin-bottom: 1.75rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-main);">
+          3. Upload Photo of Damaged Plant:
+        </label>
+        <input type="file" name="damage_photo" accept="image/*" class="form-control" style="padding: 8px;" required>
+        <span style="font-size: 0.8rem; color: #64748b; margin-top: 4px; display: block;">Take a clear photo showing the plant and unboxed packaging.</span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg" style="font-weight: 700;">
+        <i data-lucide="send" style="width: 18px;"></i> Submit Replacement Claim
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

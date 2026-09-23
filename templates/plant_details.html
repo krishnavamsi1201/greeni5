@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% block title %}{{ plant.name }} - Greeni5 Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+
+  <!-- Breadcrumbs -->
+  <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 2rem;">
+    <a href="{{ url_for('index') }}" style="color: var(--primary);">Home</a> / 
+    <a href="{{ url_for('catalog') }}" style="color: var(--primary);">Catalog</a> / 
+    <a href="{{ url_for('catalog', category=plant.category_slug) }}" style="color: var(--primary);">{{ plant.category_name }}</a> / 
+    <span style="color: var(--text-main); font-weight: 600;">{{ plant.name }}</span>
+  </div>
+
+  <div class="product-details-grid">
+    <!-- Left Column: Image Gallery -->
+    <div>
+      <div class="gallery-main-wrap">
+        {% if images %}
+          <img id="main-plant-image" src="{{ images[0].image_url }}" alt="{{ plant.name }}" class="gallery-main-img">
+        {% else %}
+          <img id="main-plant-image" src="https://images.unsplash.com/photo-1545241047-6083a3684587?w=800" alt="{{ plant.name }}" class="gallery-main-img">
+        {% endif %}
+      </div>
+
+      <!-- Thumbnail switcher -->
+      {% if images and images | length > 1 %}
+        <div class="gallery-thumbs">
+          {% for img in images %}
+            <div class="thumb-item {{ 'active' if loop.first else '' }}" data-full-img="{{ img.image_url }}">
+              <img src="{{ img.image_url }}" alt="Thumbnail">
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Right Column: Details & Purchase -->
+    <div>
+      <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px;">
+        {{ plant.category_name }}
+      </span>
+      <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin: 0.4rem 0 0.75rem 0; line-height: 1.2;">
+        {{ plant.name }}
+      </h1>
+
+      <!-- Rating & Stock Status -->
+      <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 0.35rem; color: #d97706; font-weight: 600; font-size: 0.95rem;">
+          <i data-lucide="star" style="width: 18px; height: 18px; fill: #d97706;"></i>
+          <span>{{ avg_rating }}</span>
+          <span style="color: var(--text-muted); font-weight: 400;">({{ review_count }} customer reviews)</span>
+        </div>
+
+        {% if plant.stock > 0 %}
+          <span class="badge badge-stock-in">
+            <i data-lucide="check" style="width: 12px; height: 12px;"></i> In Stock ({{ plant.stock }} available)
+          </span>
+        {% else %}
+          <span class="badge badge-stock-out">
+            <i data-lucide="x" style="width: 12px; height: 12px;"></i> Currently Out of Stock
+          </span>
+        {% endif %}
+      </div>
+
+      <!-- Pricing Box -->
+      <div style="background: var(--bg-surface-alt); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+          {% set effective_price = plant.discount_price if plant.discount_price and plant.discount_price < plant.price else plant.price %}
+          <span id="details-display-price" data-base-price="{{ effective_price }}" style="font-size: 2.1rem; font-weight: 800; color: var(--primary-dark);">{{ effective_price | currency }}</span>
+          {% if plant.discount_price and plant.discount_price < plant.price %}
+            <span style="font-size: 1.15rem; color: var(--text-muted); text-decoration: line-through;">{{ plant.price | currency }}</span>
+            {% set disc_pct = (((plant.price - plant.discount_price) / plant.price) * 100) | round | int %}
+            <span class="badge badge-discount">{{ disc_pct }}% SAVINGS</span>
+          {% endif %}
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem;">Price inclusive of all taxes. Free shipping on orders over ₹999.</p>
+      </div>
+
+      <!-- Pot Style & Size Variants (Feature 1) -->
+      {% if variants %}
+        <div style="margin-bottom: 1.5rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 1rem 1.25rem;">
+          <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; color: #166534;">
+            🪴 Select Pot Style & Size:
+          </label>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            {% for v in variants %}
+              <button type="button" class="pot-variant-pill {{ 'active' if loop.first else '' }}" data-variant-id="{{ v.id }}" data-extra-price="{{ v.extra_price }}" style="padding: 8px 14px; border-radius: 8px; border: 1.5px solid #86efac; background: {{ '#dcfce7' if loop.first else '#ffffff' }}; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #166534;">
+                {{ v.variant_name }} {% if v.extra_price > 0 %}(+{{ v.extra_price | currency }}){% endif %}
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Botanical Description -->
+      <div style="margin-bottom: 1.75rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;">Plant Description</h3>
+        <p style="color: #475569; font-size: 0.95rem; line-height: 1.7;">
+          {{ plant.description }}
+        </p>
+      </div>
+
+      <!-- Care Instructions Specs Grid -->
+      <div style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.75rem;">Care & Growing Instructions</h3>
+        <div class="care-specs-grid">
+          <div class="spec-card">
+            <div class="spec-icon"><i data-lucide="sun" style="width: 20px;"></i></div>
+            <div class="spec-info">
+              <h5>Sunlight</h5>
+              <p>{{ plant.sunlight or 'Moderate indirect daylight' }}</p>
+            </div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-icon"><i data-lucide="droplet" style="width: 20px;"></i></div>
+            <div class="spec-info">
+              <h5>Watering</h5>
+              <p>{{ plant.watering or 'Water when topsoil feels dry' }}</p>
+            </div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-icon"><i data-lucide="thermometer" style="width: 20px;"></i></div>
+            <div class="spec-info">
+              <h5>Temperature</h5>
+              <p>{{ plant.temperature or '18°C - 32°C' }}</p>
+            </div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-icon"><i data-lucide="layers" style="width: 20px;"></i></div>
+            <div class="spec-info">
+              <h5>Soil / Difficulty</h5>
+              <p>{{ plant.soil or 'Well-aerated potting mix' }} • {{ plant.difficulty or 'Easy' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add to Cart Form -->
+      {% if plant.stock > 0 %}
+        <form action="{{ url_for('add_to_cart', plant_id=plant.id) }}" method="POST" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
+          <input type="hidden" name="variant_id" id="selected-variant-id" value="{{ variants[0].id if variants else '' }}">
+          <div class="qty-control">
+            <button type="button" class="qty-btn minus">-</button>
+            <input type="number" id="detail-quantity" name="quantity" class="qty-input qty-val" value="1" min="1" max="{{ plant.stock }}">
+            <button type="button" class="qty-btn plus">+</button>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg ajax-add-to-cart" data-plant-id="{{ plant.id }}" style="flex: 1;">
+            <i data-lucide="shopping-bag" style="width: 20px; height: 20px;"></i> Add to Shopping Cart
+          </button>
+        </form>
+      {% else %}
+        <div style="background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: var(--radius); margin-bottom: 2rem; font-weight: 600; text-align: center;">
+          This specimen is currently out of stock. Check back soon for fresh arrivals!
+        </div>
+      {% endif %}
+
+      <!-- Frequently Bought Together Combos (Feature 2) -->
+      {% if addons %}
+        <div style="background: rgba(240, 253, 244, 0.85); border: 1.5px solid #86efac; border-radius: var(--radius); padding: 1.25rem; margin-bottom: 2rem;">
+          <h4 style="font-size: 0.95rem; font-weight: 800; color: #166534; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="package-plus" style="width: 18px;"></i> Frequently Bought Together (Plant Care Combo)
+          </h4>
+          <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+            {% for addon in addons %}
+              <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 8px 12px; border-radius: 6px; border: 1px solid #d1fae5;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <img src="{{ addon.image_url }}" alt="{{ addon.name }}" style="width: 38px; height: 38px; border-radius: 6px; object-fit: cover;">
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a;">{{ addon.name }}</div>
+                    <div style="font-size: 0.75rem; color: #64748b;">{{ addon.description }}</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-weight: 800; color: #15803d; font-size: 0.9rem;">+{{ addon.price | currency }}</span>
+                  <a href="{{ url_for('add_addon_to_cart', addon_id=addon.id) }}" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 3px 8px;">
+                    + Add
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Trust Badges -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+        <div style="text-align: center;">
+          <i data-lucide="package-check" style="color: var(--primary); width: 24px; height: 24px; margin: 0 auto 0.25rem auto;"></i>
+          <span style="font-size: 0.78rem; font-weight: 600; display: block;">Safe Transit Pack</span>
+        </div>
+        <div style="text-align: center;">
+          <i data-lucide="refresh-cw" style="color: var(--primary); width: 24px; height: 24px; margin: 0 auto 0.25rem auto;"></i>
+          <span style="font-size: 0.78rem; font-weight: 600; display: block;">7-Day Replacement</span>
+        </div>
+        <div style="text-align: center;">
+          <i data-lucide="help-circle" style="color: var(--primary); width: 24px; height: 24px; margin: 0 auto 0.25rem auto;"></i>
+          <span style="font-size: 0.78rem; font-weight: 600; display: block;">Free Care Support</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews & Ratings Section -->
+  <section style="margin-top: 5rem; padding-top: 3rem; border-top: 1px solid var(--border);">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--text-main);">Customer Reviews & Ratings</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Verified gardener feedback for {{ plant.name }}</p>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; align-items: start;">
+      <!-- Review List -->
+      <div>
+        {% if reviews %}
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            {% for rev in reviews %}
+              <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow-sm);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                  <div>
+                    <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-main); display: inline-block;">{{ rev.user_name }}</h4>
+                    <span style="background: #dcfce7; color: #15803d; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">
+                      &#10004; Verified Plant Parent
+                    </span>
+                  </div>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">{{ rev.created_at.split()[0] if rev.created_at else 'Recently' }}</span>
+                </div>
+                <div style="display: flex; gap: 0.2rem; color: #d97706; margin-bottom: 0.75rem;">
+                  {% for _ in range(rev.rating) %}
+                    <i data-lucide="star" style="width: 14px; height: 14px; fill: #d97706;"></i>
+                  {% endfor %}
+                </div>
+                {% if rev.photo_url %}
+                  <div style="margin-bottom: 0.75rem;">
+                    <a href="{{ rev.photo_url }}" target="_blank">
+                      <img src="{{ rev.photo_url }}" alt="Customer Plant Photo" style="width: 85px; height: 85px; border-radius: 8px; object-fit: cover; border: 1.5px solid #86efac; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                    </a>
+                  </div>
+                {% endif %}
+                <p style="color: #334155; font-size: 0.925rem; line-height: 1.6;">{{ rev.comment }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div style="background: var(--bg-surface-alt); border-radius: var(--radius); padding: 2rem; text-align: center; color: var(--text-muted);">
+            No reviews yet. Be the first to share your experience with this plant!
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Write a Review Form (Feature 5) -->
+      <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Write a Review</h3>
+        <form action="{{ url_for('add_review', plant_id=plant.id) }}" method="POST" enctype="multipart/form-data">
+          {% if not current_user %}
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Your Name</label>
+              <input type="text" name="user_name" required placeholder="e.g. Rahul Verma" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;">
+            </div>
+          {% endif %}
+
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Rating</label>
+            <select name="rating" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: #ffffff;">
+              <option value="5">★★★★★ - 5 Stars (Outstanding)</option>
+              <option value="4">★★★★☆ - 4 Stars (Very Good)</option>
+              <option value="3">★★★☆☆ - 3 Stars (Good)</option>
+              <option value="2">★★☆☆☆ - 2 Stars (Needs Improvement)</option>
+              <option value="1">★☆☆☆☆ - 1 Star (Disappointed)</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Upload Balcony / Plant Photo (Optional)</label>
+            <input type="file" name="review_photo" accept="image/*" style="width: 100%; padding: 6px; border: 1px dashed var(--border); border-radius: 8px; font-size: 0.85rem;">
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Your Review Comment</label>
+            <textarea name="comment" rows="4" required placeholder="Describe the plant freshness, packaging, growth, and overall satisfaction..." style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem;"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            Submit Plant Review
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Plants -->
+  {% if related_plants %}
+    <section style="margin-top: 5rem;">
+      <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main); margin-bottom: 2rem;">Similar Plants You May Like</h2>
+      <div class="product-grid">
+        {% for rp in related_plants %}
+          <div class="product-card">
+            <div class="product-card-img-wrap">
+              <a href="{{ url_for('plant_details', slug=rp.slug) }}">
+                <img src="{{ rp.image_url }}" alt="{{ rp.name }}" class="product-card-img" loading="lazy">
+              </a>
+            </div>
+            <div class="product-card-body">
+              <span class="product-category">{{ rp.category_name }}</span>
+              <h3 class="product-title">
+                <a href="{{ url_for('plant_details', slug=rp.slug) }}">{{ rp.name }}</a>
+              </h3>
+              <div class="product-price-row">
+                <span class="current-price">{{ (rp.discount_price if rp.discount_price else rp.price) | currency }}</span>
+              </div>
+              <a href="{{ url_for('plant_details', slug=rp.slug) }}" class="btn btn-outline btn-sm btn-block">View Details</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const pills = document.querySelectorAll('.pot-variant-pill');
+  const variantInput = document.getElementById('selected-variant-id');
+  const priceDisplay = document.getElementById('details-display-price');
+
+  if (pills.length && variantInput && priceDisplay) {
+    const basePrice = parseFloat(priceDisplay.dataset.basePrice) || 0;
+
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        pills.forEach(p => {
+          p.classList.remove('active');
+          p.style.background = '#ffffff';
+          p.style.borderColor = '#86efac';
+          p.style.fontWeight = '600';
+        });
+        pill.classList.add('active');
+        pill.style.background = '#dcfce7';
+        pill.style.borderColor = '#15803d';
+        pill.style.fontWeight = '700';
+
+        variantInput.value = pill.dataset.variantId || '';
+        const extra = parseFloat(pill.dataset.extraPrice) || 0;
+        const total = basePrice + extra;
+        priceDisplay.textContent = '₹' + Math.round(total).toLocaleString('en-IN');
+      });
+    });
+  }
+});
+</script>
+{% endblock %}

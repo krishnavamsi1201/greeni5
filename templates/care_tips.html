@@ -1,0 +1,95 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Plant Care Guide & Tips - Greeni5 Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 5rem; max-width: 960px;">
+
+  <div style="text-align: center; margin-bottom: 3.5rem;">
+    <span class="badge badge-featured" style="margin-bottom: 0.75rem;">Botanical Knowledge Base</span>
+    <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.75rem;">
+      The Ultimate Plant Care Master Guide
+    </h1>
+    <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 620px; margin: 0 auto;">
+      Master the art of nurturing indoor foliage, outdoor shrubs, flowers, and medicinal herbs with expert horticulture insights.
+    </p>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+    
+    <!-- Tip 1: Watering Rules -->
+    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-sm); display: grid; grid-template-columns: 80px 1fr; gap: 2rem; align-items: start;">
+      <div style="width: 70px; height: 70px; border-radius: 16px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="droplets" style="width: 36px; height: 36px;"></i>
+      </div>
+      <div>
+        <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--text-main);">
+          1. The "Top-2-Inches" Watering Rule
+        </h2>
+        <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem;">
+          Overwatering is the #1 cause of houseplant demise. Rather than watering on a fixed calendar schedule, always insert your index finger 2 inches into the topsoil. If soil feels completely dry and crumbly, water thoroughly until it trickles out the drainage holes. If it feels cool and moist, wait another 2-3 days.
+        </p>
+        <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 0.85rem 1.25rem; border-radius: 6px; font-size: 0.875rem; color: #166534;">
+          <strong>Pro-Tip:</strong> Empty the drainage saucer 15 minutes after watering. Never let plant roots sit in standing water to prevent root rot.
+        </div>
+      </div>
+    </div>
+
+    <!-- Tip 2: Sunlight -->
+    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-sm); display: grid; grid-template-columns: 80px 1fr; gap: 2rem; align-items: start;">
+      <div style="width: 70px; height: 70px; border-radius: 16px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="sun" style="width: 36px; height: 36px;"></i>
+      </div>
+      <div>
+        <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--text-main);">
+          2. Deciphering Sunlight Needs: Direct vs. Bright Indirect
+        </h2>
+        <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem;">
+          <strong>Bright Indirect Light:</strong> Bright enough to comfortably read a book without artificial lighting, but where the sun's harsh rays do not directly heat the leaf surface (e.g. Monstera, Snake Plant, Peace Lily).<br>
+          <strong>Full Direct Sunlight:</strong> Unfiltered rays hitting the foliage for 5 to 7+ hours daily (e.g. Bougainvillea, Hibiscus, Dwarf Mango, Adenium).
+        </p>
+        <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 0.85rem 1.25rem; border-radius: 6px; font-size: 0.875rem; color: #92400e;">
+          <strong>Symptom Check:</strong> Scorched brown crispy patches mean too much direct sun; pale elongated stems and dropped lower leaves mean the plant needs more ambient light.
+        </div>
+      </div>
+    </div>
+
+    <!-- Tip 3: Soil & Repotting -->
+    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-sm); display: grid; grid-template-columns: 80px 1fr; gap: 2rem; align-items: start;">
+      <div style="width: 70px; height: 70px; border-radius: 16px; background: #ede9fe; color: #7c3aed; display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="layers" style="width: 36px; height: 36px;"></i>
+      </div>
+      <div>
+        <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--text-main);">
+          3. Soil Aeration & Repotting Essentials
+        </h2>
+        <p style="color: #475569; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem;">
+          Greeni5 potted plants arrive in nutrient-balanced coco-peat and vermicompost blends designed for immediate healthy growth. Wait 7 to 14 days after transit before repotting so the plant adapts to your home environment. When upgrading pots, only choose a planter 1-2 inches wider in diameter.
+        </p>
+      </div>
+    </div>
+
+    <!-- Tip 4: Seasonal Feeding -->
+    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-sm); display: grid; grid-template-columns: 80px 1fr; gap: 2rem; align-items: start;">
+      <div style="width: 70px; height: 70px; border-radius: 16px; background: #dcfce7; color: #15803d; display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="sprout" style="width: 36px; height: 36px;"></i>
+      </div>
+      <div>
+        <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--text-main);">
+          4. Organic Feeding & Fertilization
+        </h2>
+        <p style="color: #475569; font-size: 0.95rem; line-height: 1.7;">
+          Feed your plants during active growth months (Spring to Autumn) with organic seaweed extract or balanced slow-release vermicompost once every 3-4 weeks. In deep winter, reduce feeding as plant metabolism naturally rests.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="text-align: center; margin-top: 3.5rem;">
+    <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 1rem;">Ready to expand your home garden?</h3>
+    <a href="{{ url_for('catalog') }}" class="btn btn-primary btn-lg">Browse Plant Varieties</a>
+  </div>
+
+</div>
+{% endblock %}

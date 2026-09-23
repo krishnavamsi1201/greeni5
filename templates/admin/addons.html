@@ -1,0 +1,111 @@
+﻿{% extends "admin/base_admin.html" %}
+
+{% block title %}Add-ons & Combos Manager - Greeni5 Admin{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card" style="margin-bottom: 2rem;">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title"><i data-lucide="package-plus" style="width: 20px;"></i> Add New Plant Care Add-on Combo</h3>
+  </div>
+
+  <form action="{{ url_for('admin_addons') }}" method="POST" style="padding: 1.5rem;">
+    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px;">Add-on Item Name</label>
+        <input type="text" name="name" class="form-control" placeholder="e.g. Organic Vermicompost 1 KG" required>
+      </div>
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px;">Price (₹)</label>
+        <input type="number" step="0.01" name="price" class="form-control" placeholder="99.00" required>
+      </div>
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px;">Category</label>
+        <select name="category" class="form-control">
+          <option value="Fertilizers">Fertilizers</option>
+          <option value="Tools">Tools</option>
+          <option value="Plant Care">Plant Care</option>
+          <option value="Planters">Planters</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 1rem; margin-bottom: 1.25rem;">
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px;">Photo Image URL</label>
+        <input type="url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/..." required>
+      </div>
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px;">Description / Upsell Benefit</label>
+        <input type="text" name="description" class="form-control" placeholder="Promotes strong roots and lush green leaf expansion.">
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      <i data-lucide="plus" style="width: 16px;"></i> Create Add-on Combo
+    </button>
+  </form>
+</div>
+
+<!-- Addons List Table -->
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title"><i data-lucide="layers" style="width: 20px;"></i> Active Add-ons Shown on Storefront (Frequently Bought Together)</h3>
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Preview</th>
+          <th>Add-on Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for addon in addons %}
+        <tr>
+          <td>
+            <img src="{{ addon.image_url }}" alt="{{ addon.name }}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid #cbd5e1;">
+          </td>
+          <td><strong>{{ addon.name }}</strong></td>
+          <td><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;">{{ addon.category }}</span></td>
+          <td><strong style="color: #15803d;">{{ addon.price | currency }}</strong></td>
+          <td style="font-size: 0.85rem; color: #64748b; max-width: 260px;">{{ addon.description }}</td>
+          <td>
+            {% if addon.is_active %}
+              <span class="badge badge-accepted">Active</span>
+            {% else %}
+              <span class="badge badge-rejected">Hidden</span>
+            {% endif %}
+          </td>
+          <td style="text-align: right;">
+            <div style="display: inline-flex; gap: 6px;">
+              <form action="{{ url_for('admin_addon_toggle', addon_id=addon.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-secondary btn-sm" title="Toggle visibility">
+                  {% if addon.is_active %}Hide{% else %}Activate{% endif %}
+                </button>
+              </form>
+              <form action="{{ url_for('admin_addon_delete', addon_id=addon.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this add-on?');">
+                <button type="submit" class="btn btn-sm" style="background: #fee2e2; color: #dc2626; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
+                  <i data-lucide="trash-2" style="width: 14px;"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 2rem; color: #64748b;">
+            No add-ons created yet. Create one above to show on plant detail pages!
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

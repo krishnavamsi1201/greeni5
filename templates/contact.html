@@ -1,0 +1,92 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Contact Us - Greeni5 Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3.5rem; padding-bottom: 5rem; max-width: 960px;">
+
+  <div style="text-align: center; margin-bottom: 3.5rem;">
+    <span class="badge badge-stock-in" style="margin-bottom: 0.75rem;">Get In Touch</span>
+    <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.75rem;">
+      We’d Love to Hear From You
+    </h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 540px; margin: 0 auto;">
+      Have a question about a plant, an order, or need plant doctor advice? Our horticultural specialists are ready to help.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 3rem; align-items: start;">
+    
+    <!-- Left Column: Nursery Information -->
+    <div style="background: var(--bg-surface-alt); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem;">
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem;">Nursery Headquarters</h3>
+      
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div style="display: flex; gap: 1rem;">
+          <div style="width: 42px; height: 42px; border-radius: 10px; background: #ffffff; color: var(--primary); display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); flex-shrink: 0;">
+            <i data-lucide="map-pin" style="width: 20px;"></i>
+          </div>
+          <div>
+            <h4 style="font-size: 0.95rem; font-weight: 700;">Greenhouse Location</h4>
+            <p style="font-size: 0.875rem; color: #64748b; line-height: 1.4;">Survey 42, Botanical Nursery Road, Green Valley, Bengaluru, Karnataka 560038</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+          <div style="width: 42px; height: 42px; border-radius: 10px; background: #ffffff; color: var(--primary); display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); flex-shrink: 0;">
+            <i data-lucide="phone" style="width: 20px;"></i>
+          </div>
+          <div>
+            <h4 style="font-size: 0.95rem; font-weight: 700;">Direct Phone & WhatsApp</h4>
+            <p style="font-size: 0.875rem; color: #64748b;">+91 98765 43210<br>(Mon - Sat: 9:00 AM - 7:00 PM)</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+          <div style="width: 42px; height: 42px; border-radius: 10px; background: #ffffff; color: var(--primary); display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); flex-shrink: 0;">
+            <i data-lucide="mail" style="width: 20px;"></i>
+          </div>
+          <div>
+            <h4 style="font-size: 0.95rem; font-weight: 700;">Email Support</h4>
+            <p style="font-size: 0.875rem; color: #64748b;">care@greeni5.com<br>support@greeni5.com</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Contact Form -->
+    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.25rem; box-shadow: var(--shadow-sm);">
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem;">Send a Message</h3>
+      
+      <form action="{{ url_for('contact') }}" method="POST">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Your Name *</label>
+            <input type="text" name="name" required placeholder="John Doe" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Your Email *</label>
+            <input type="email" name="email" required placeholder="john@example.com" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem;">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Subject *</label>
+          <input type="text" name="subject" required placeholder="Question about Plant Care, Bulk Order, or Shipment..." style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem;">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Your Message *</label>
+          <textarea name="message" rows="5" required placeholder="Write your inquiry or question here in detail..." style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; font-family: inherit;"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+          Send Message <i data-lucide="send" style="width: 16px;"></i>
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

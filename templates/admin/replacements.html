@@ -1,0 +1,91 @@
+﻿{% extends "admin/base_admin.html" %}
+
+{% block title %}Transit Damage & Replacement Claims - Greeni5 Admin{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header">
+    <div>
+      <h3 class="admin-card-title"><i data-lucide="shield-alert" style="width: 20px;"></i> Live Plant Transit Damage & Replacement Claims</h3>
+      <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Review customer photos and approve re-shipping under the Greeni5 7-Day Guarantee.</p>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Claim ID</th>
+          <th>Order #</th>
+          <th>Customer</th>
+          <th>Plant Name</th>
+          <th>Damaged Photo</th>
+          <th>Customer Reason</th>
+          <th>Status</th>
+          <th>Admin Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for claim in claims %}
+        <tr>
+          <td><strong>#CLM-{{ claim.id }}</strong></td>
+          <td>
+            <a href="{{ url_for('admin_orders') }}?search={{ claim.order_number }}" style="color: #15803d; font-weight: 700; text-decoration: underline;">
+              {{ claim.order_number }}
+            </a>
+          </td>
+          <td>
+            <div><strong>{{ claim.customer_name }}</strong></div>
+            <div style="font-size: 0.8rem; color: #64748b;">{{ claim.customer_phone }}</div>
+          </td>
+          <td>{{ claim.plant_name }}</td>
+          <td>
+            {% if claim.photo_url %}
+              <a href="{{ claim.photo_url }}" target="_blank" title="Click to open full photo">
+                <img src="{{ claim.photo_url }}" alt="Damaged plant" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 2px solid #ef4444;">
+              </a>
+            {% else %}
+              <span style="color: #94a3b8; font-size: 0.8rem;">No photo</span>
+            {% endif %}
+          </td>
+          <td style="font-size: 0.88rem; color: #334155; max-width: 240px;">
+            "{{ claim.reason }}"
+            <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 3px;">Submitted: {{ claim.created_at }}</div>
+          </td>
+          <td>
+            {% if claim.status == 'Pending' %}
+              <span class="badge badge-pending">Pending Review</span>
+            {% elif claim.status == 'Approved' %}
+              <span class="badge badge-accepted">Approved</span>
+            {% elif claim.status == 'Reshipped' %}
+              <span class="badge badge-shipped">Re-Shipped</span>
+            {% else %}
+              <span class="badge badge-rejected">Rejected</span>
+            {% endif %}
+          </td>
+          <td>
+            <form action="{{ url_for('admin_claim_status_update', claim_id=claim.id) }}" method="POST" style="display: flex; flex-direction: column; gap: 4px;">
+              <select name="status" class="form-control" style="font-size: 0.8rem; padding: 4px 8px;">
+                <option value="Pending" {% if claim.status == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Approved" {% if claim.status == 'Approved' %}selected{% endif %}>Approve (Guarantee Valid)</option>
+                <option value="Reshipped" {% if claim.status == 'Reshipped' %}selected{% endif %}>Re-Shipped New Plant</option>
+                <option value="Rejected" {% if claim.status == 'Rejected' %}selected{% endif %}>Reject Claim</option>
+              </select>
+              <input type="text" name="admin_notes" value="{{ claim.admin_notes or '' }}" placeholder="Notes / New AWB..." class="form-control" style="font-size: 0.8rem; padding: 4px 8px;">
+              <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 4px;">Update Status</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8" style="text-align: center; padding: 2.5rem; color: #64748b;">
+            <i data-lucide="shield-check" style="width: 32px; height: 32px; color: #15803d; margin-bottom: 0.5rem;"></i>
+            <div>No damage claims submitted. All plant shipments healthy!</div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

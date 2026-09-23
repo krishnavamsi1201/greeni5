@@ -1,0 +1,58 @@
+﻿{% extends "base.html" %}
+
+{% block title %}About Us - Greeni5 Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3.5rem; padding-bottom: 5rem; max-width: 900px;">
+
+  <div style="text-align: center; margin-bottom: 3.5rem;">
+    <span class="badge badge-featured" style="margin-bottom: 0.75rem;">Our Mission</span>
+    <h1 style="font-size: 2.6rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem;">
+      Bringing Forests Back Into Modern Homes
+    </h1>
+    <p style="color: var(--text-muted); font-size: 1.15rem; line-height: 1.7; max-width: 700px; margin: 0 auto;">
+      Founded with a deep reverence for nature, Greeni5 cultivates over 100 species of acclimatized plants, transforming concrete rooms into thriving sanctuaries of clean air and tranquility.
+    </p>
+  </div>
+
+  <div style="margin-bottom: 4rem;">
+    <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1200&auto=format&fit=crop&q=80" alt="Greeni5 Greenhouse Nursery" style="width: 100%; height: 380px; object-fit: cover; border-radius: var(--radius-lg); box-shadow: var(--shadow);">
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 4rem;">
+    <div>
+      <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem;">From Sapling to Doorstep</h2>
+      <p style="color: #475569; font-size: 0.95rem; line-height: 1.7;">
+        Every specimen at Greeni5 begins life in our climate-regulated polyhouses in Bengaluru. Raised by seasoned botanists without synthetic growth accelerants, our plants develop robust fibrous root networks that transition seamlessly into home pots.
+      </p>
+    </div>
+    <div>
+      <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem;">Engineered Transit Protection</h2>
+      <p style="color: #475569; font-size: 0.95rem; line-height: 1.7;">
+        We custom-designed breathable honeycomb cardboard cases that lock the soil in place and protect fragile stems against bumps during transit. Your plant arrives as fresh and hydrated as if you picked it directly from our greenhouse.
+      </p>
+    </div>
+  </div>
+
+  <!-- Nursery Stats -->
+  <div style="background: var(--bg-surface-alt); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; text-align: center;">
+    <div>
+      <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary);">15k+</div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Plants Shipped</div>
+    </div>
+    <div>
+      <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary);">98.8%</div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Survival Rate</div>
+    </div>
+    <div>
+      <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary);">100+</div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Botanical Species</div>
+    </div>
+    <div>
+      <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary);">4.9 ★</div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Average Review</div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

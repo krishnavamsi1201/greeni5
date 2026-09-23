@@ -1,0 +1,184 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}{{ 'Edit Plant' if plant else 'Add New Plant' }} - Greeni5 Admin{% endblock %}
+{% block page_title %}{{ 'Edit Plant Profile' if plant else 'Add New Plant to Catalog' }}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card" style="max-width: 900px; margin: 0 auto;">
+  <div class="admin-card-header">
+    <h3>{{ 'Edit: ' + plant.name if plant else 'New Botanical Product Details' }}</h3>
+    <a href="{{ url_for('admin_plants') }}" class="btn btn-outline btn-sm">← Back to Plant List</a>
+  </div>
+
+  <div style="padding: 2rem;">
+    <form action="{{ url_for('admin_plant_edit', plant_id=plant.id) if plant else url_for('admin_plant_add') }}" method="POST" enctype="multipart/form-data">
+      
+      <!-- Basic Details -->
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.4rem;">Plant Name *</label>
+        <input type="text" name="name" required value="{{ plant.name if plant else '' }}" placeholder="e.g. Fiddle Leaf Fig (Ficus Lyrata)" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+        <div>
+          <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.4rem;">Category *</label>
+          <select name="category_id" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: #ffffff;">
+            {% for cat in categories %}
+              <option value="{{ cat.id }}" {{ 'selected' if plant and plant.category_id == cat.id else '' }}>
+                {{ cat.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.4rem;">Inventory Stock Units *</label>
+          <input type="number" name="stock" required min="0" value="{{ plant.stock if plant else 15 }}" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
+        </div>
+      </div>
+
+      <!-- Pricing -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+        <div>
+          <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.4rem;">Regular Price (₹) *</label>
+          <input type="number" step="0.01" name="price" required value="{{ plant.price if plant else '' }}" placeholder="899.00" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.4rem;">Discounted / Sale Price (₹) (Optional)</label>
+          <input type="number" step="0.01" name="discount_price" value="{{ plant.discount_price if plant and plant.discount_price else '' }}" placeholder="749.00" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;">
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.4rem;">Detailed Description *</label>
+        <textarea name="description" rows="4" required placeholder="Describe appearance, air purifying benefits, origin, aesthetic appeal..." style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; font-family: inherit;">{{ plant.description if plant else '' }}</textarea>
+      </div>
+
+      <!-- Care Instructions Specifications -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+        <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Botanical Care Instructions</h4>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Sunlight Requirements</label>
+            <input type="text" name="sunlight" value="{{ plant.sunlight if plant else '' }}" placeholder="e.g. Bright indirect sunlight" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Watering Schedule</label>
+            <input type="text" name="watering" value="{{ plant.watering if plant else '' }}" placeholder="e.g. Once a week when topsoil dries" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem;">
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Ideal Temperature</label>
+            <input type="text" name="temperature" value="{{ plant.temperature if plant else '' }}" placeholder="e.g. 18°C - 30°C" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Soil Blend</label>
+            <input type="text" name="soil" value="{{ plant.soil if plant else '' }}" placeholder="e.g. Well-draining coco-peat mix" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Care Difficulty</label>
+            <select name="difficulty" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background: #ffffff;">
+              <option value="Very Easy" {{ 'selected' if plant and plant.difficulty == 'Very Easy' else '' }}>Very Easy</option>
+              <option value="Easy" {{ 'selected' if not plant or plant.difficulty == 'Easy' else '' }}>Easy</option>
+              <option value="Moderate" {{ 'selected' if plant and plant.difficulty == 'Moderate' else '' }}>Moderate</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multiple Image Upload & URLs -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+        <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">Plant Images Management</h4>
+
+        <!-- Existing Images (if editing) -->
+        {% if images %}
+          <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem;">Current Gallery Images</label>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+              {% for img in images %}
+                <div style="position: relative; border: 2px solid {{ '#15803d' if img.is_primary else '#cbd5e1' }}; border-radius: 8px; padding: 4px; background: #ffffff;">
+                  <img src="{{ img.image_url }}" alt="Plant Image" style="width: 80px; height: 80px; object-fit: cover; border-radius: 6px;">
+                  {% if img.is_primary %}
+                    <span style="position: absolute; bottom: 6px; left: 6px; background: #15803d; color: white; font-size: 0.65rem; padding: 2px 4px; border-radius: 4px; font-weight: 700;">PRIMARY</span>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Upload Image Files (Multiple allowed)</label>
+          <input type="file" id="plant-image-files" name="image_files" multiple accept="image/*" style="width: 100%; padding: 8px; border: 1px dashed #94a3b8; border-radius: 6px; background: #ffffff;">
+          <div id="image-preview-box" style="display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;"></div>
+        </div>
+
+        </div>
+      </div>
+
+      <!-- Plant Pot & Size Variants Section -->
+      <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <div>
+            <h4 style="font-size: 1rem; font-weight: 700; color: #166534; margin: 0;">🪴 Pot Type & Size Variants (Upsell Options)</h4>
+            <p style="font-size: 0.8rem; color: #1e3a29; margin-top: 2px;">Offer customers choices like standard nursery pot, decorative ceramic pot, or self-watering pot with custom price add-ons.</p>
+          </div>
+        </div>
+
+        <div id="variants-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          {% if variants %}
+            {% for v in variants %}
+              <div class="variant-row" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.75rem; background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #bbf7d0;">
+                <input type="text" name="variant_name[]" value="{{ v.variant_name }}" placeholder="Variant Name (e.g. 6-inch Ceramic White Pot)" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+                <input type="text" name="pot_type[]" value="{{ v.pot_type }}" placeholder="Pot Type (Ceramic)" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+                <input type="number" step="0.01" name="variant_extra_price[]" value="{{ v.extra_price }}" placeholder="+₹ Extra" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+                <input type="number" name="variant_stock[]" value="{{ v.stock }}" placeholder="Stock" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+              </div>
+            {% endfor %}
+          {% else %}
+            <!-- Default 3 Starter Variants -->
+            <div class="variant-row" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.75rem; background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #bbf7d0;">
+              <input type="text" name="variant_name[]" value="4-inch Nursery Recycled Pot" placeholder="Variant Name" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+              <input type="text" name="pot_type[]" value="Nursery Plastic" placeholder="Pot Type" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+              <input type="number" step="0.01" name="variant_extra_price[]" value="0.00" placeholder="+₹ Extra" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+              <input type="number" name="variant_stock[]" value="25" placeholder="Stock" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+            </div>
+            <div class="variant-row" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.75rem; background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #bbf7d0;">
+              <input type="text" name="variant_name[]" value="6-inch White Ceramic Pot" placeholder="Variant Name" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+              <input type="text" name="pot_type[]" value="Ceramic" placeholder="Pot Type" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+              <input type="number" step="0.01" name="variant_extra_price[]" value="150.00" placeholder="+₹ Extra" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+              <input type="number" name="variant_stock[]" value="15" placeholder="Stock" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+            </div>
+            <div class="variant-row" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.75rem; background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #bbf7d0;">
+              <input type="text" name="variant_name[]" value="8-inch Self-Watering Planter" placeholder="Variant Name" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+              <input type="text" name="pot_type[]" value="Self-Watering" placeholder="Pot Type" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+              <input type="number" step="0.01" name="variant_extra_price[]" value="250.00" placeholder="+₹ Extra" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+              <input type="number" name="variant_stock[]" value="10" placeholder="Stock" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Highlights / Flags -->
+      <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">
+          <input type="checkbox" name="is_featured" value="1" {{ 'checked' if plant and plant.is_featured else '' }} style="width: 18px; height: 18px; accent-color: var(--primary);">
+          <span>Feature on Home Page</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">
+          <input type="checkbox" name="is_bestseller" value="1" {{ 'checked' if plant and plant.is_bestseller else '' }} style="width: 18px; height: 18px; accent-color: var(--primary);">
+          <span>Mark as Best-Seller</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg">
+        <i data-lucide="save" style="width: 18px;"></i> {{ 'Update Plant Profile' if plant else 'Publish New Plant' }}
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

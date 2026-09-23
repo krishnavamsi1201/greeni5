@@ -1,0 +1,110 @@
+﻿{% extends "admin/base_admin.html" %}
+
+{% block title %}Flash Sales & Promotional Banners - Greeni5 Admin{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card" style="margin-bottom: 2rem;">
+  <div class="admin-card-header">
+    <div>
+      <h3 class="admin-card-title"><i data-lucide="zap" style="width: 20px;"></i> Create Flash Sale & Live Countdown Timer</h3>
+      <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Activates a glowing top announcement bar with a live ticking clock (HH:MM:SS) on the storefront!</p>
+    </div>
+  </div>
+
+  <form action="{{ url_for('admin_promotions') }}" method="POST" style="padding: 1.5rem;">
+    <div style="display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 1rem; margin-bottom: 1rem;">
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px;">Sale Title / Campaign</label>
+        <input type="text" name="title" class="form-control" placeholder="e.g. Monsoon Greenery Clearance Sale" required>
+      </div>
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px;">Discount Percentage (%)</label>
+        <input type="number" step="0.5" name="discount_pct" class="form-control" placeholder="15" required>
+      </div>
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px;">Sale Expiration Date & Time</label>
+        <input type="datetime-local" name="ends_at" class="form-control" required>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1.25rem;">
+      <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px;">Sticky Top Banner Headline Text</label>
+      <input type="text" name="banner_text" class="form-control" placeholder="🌿 Monsoon Flash Sale: Flat 15% OFF Everything! Free Organic Fertilizer with every plant!" required>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+      <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">
+        <input type="checkbox" name="is_active" value="1" checked style="width: 18px; height: 18px;">
+        <span>Set as Currently Active (Shows on Storefront immediately)</span>
+      </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      <i data-lucide="sparkles" style="width: 16px;"></i> Launch Flash Sale & Timer
+    </button>
+  </form>
+</div>
+
+<!-- Promotions List -->
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title"><i data-lucide="tag" style="width: 20px;"></i> Flash Sale Campaigns History</h3>
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Campaign Title</th>
+          <th>Discount</th>
+          <th>Ends At (Timer Countdown)</th>
+          <th>Top Banner Message</th>
+          <th>Status</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sale in sales %}
+        <tr>
+          <td><strong>{{ sale.title }}</strong></td>
+          <td><span style="background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 6px; font-weight: 700;">{{ sale.discount_pct }}% OFF</span></td>
+          <td>
+            <div style="font-family: monospace; font-size: 0.9rem; font-weight: 700; color: #dc2626;">
+              {{ sale.ends_at }}
+            </div>
+          </td>
+          <td style="font-size: 0.85rem; color: #475569; max-width: 300px;">{{ sale.banner_text }}</td>
+          <td>
+            {% if sale.is_active %}
+              <span class="badge badge-accepted">Active on Site</span>
+            {% else %}
+              <span class="badge badge-secondary">Paused</span>
+            {% endif %}
+          </td>
+          <td style="text-align: right;">
+            <div style="display: inline-flex; gap: 6px;">
+              <form action="{{ url_for('admin_promotion_toggle', sale_id=sale.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-secondary btn-sm">
+                  {% if sale.is_active %}Pause{% else %}Activate{% endif %}
+                </button>
+              </form>
+              <form action="{{ url_for('admin_promotion_delete', sale_id=sale.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this sale?');">
+                <button type="submit" class="btn btn-sm" style="background: #fee2e2; color: #dc2626; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
+                  <i data-lucide="trash-2" style="width: 14px;"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 2rem; color: #64748b;">
+            No flash sales configured yet. Launch one above!
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

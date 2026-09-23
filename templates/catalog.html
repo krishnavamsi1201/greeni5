@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Plant Catalog - Greeni5 Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+  
+  <!-- Breadcrumb -->
+  <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+    <a href="{{ url_for('index') }}" style="color: var(--primary); font-weight: 600;">Home</a> / 
+    <span style="color: var(--text-main); font-weight: 700;">Plant Catalog</span>
+    {% if selected_category %}
+      / <span style="color: var(--primary); font-weight: 700;">{{ selected_category.name }}</span>
+    {% endif %}
+  </div>
+
+  <div class="catalog-layout">
+    <!-- Filter Sidebar -->
+    <aside class="filter-sidebar">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">Filters</h3>
+        <a href="{{ url_for('catalog') }}" style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">Reset All</a>
+      </div>
+
+      <form action="{{ url_for('catalog') }}" method="GET" id="catalog-filter-form">
+        {% if search_query %}
+          <input type="hidden" name="search" value="{{ search_query }}">
+        {% endif %}
+        {% if current_sort %}
+          <input type="hidden" name="sort" value="{{ current_sort }}">
+        {% endif %}
+
+        <!-- Categories List -->
+        <div class="filter-group">
+          <h4>Plant Categories</h4>
+          <ul class="filter-categories-list">
+            <li>
+              <a href="{{ url_for('catalog', sort=current_sort, search=search_query) }}" class="{{ 'active' if not current_category or current_category == 'all' else '' }}">
+                <span>All Plants</span>
+              </a>
+            </li>
+            {% for cat in categories %}
+              <li>
+                <a href="{{ url_for('catalog', category=cat.slug, sort=current_sort, search=search_query) }}" class="{{ 'active' if current_category == cat.slug else '' }}">
+                  <span>{{ cat.name }}</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Price Range Filter -->
+        <div class="filter-group">
+          <h4>Price Range (₹)</h4>
+          <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem;">
+            <input type="number" name="min_price" placeholder="Min" value="{{ min_price or '' }}" style="width: 50%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.85rem;">
+            <span>-</span>
+            <input type="number" name="max_price" placeholder="Max" value="{{ max_price or '' }}" style="width: 50%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.85rem;">
+          </div>
+        </div>
+
+        <!-- Care Difficulty Filter -->
+        <div class="filter-group">
+          <h4>Care Level</h4>
+          <select name="difficulty" style="width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.85rem; background: #ffffff;">
+            <option value="">All Difficulty Levels</option>
+            <option value="Very Easy" {{ 'selected' if current_difficulty == 'Very Easy' else '' }}>Very Easy</option>
+            <option value="Easy" {{ 'selected' if current_difficulty == 'Easy' else '' }}>Easy</option>
+            <option value="Moderate" {{ 'selected' if current_difficulty == 'Moderate' else '' }}>Moderate</option>
+          </select>
+        </div>
+
+        {% if current_category %}
+          <input type="hidden" name="category" value="{{ current_category }}">
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary btn-block btn-sm" style="margin-top: 1rem;">
+          Apply Filters
+        </button>
+      </form>
+    </aside>
+
+    <!-- Main Catalog Products Grid -->
+    <main>
+      <!-- Toolbar -->
+      <div class="catalog-toolbar">
+        <div>
+          <span style="font-weight: 800; color: var(--text-main); font-size: 1.15rem;">
+            {{ selected_category.name if selected_category else 'All Botanical Varieties' }}
+          </span>
+          <span style="color: var(--text-muted); font-size: 0.875rem; margin-left: 0.5rem; font-weight: 600;">
+            ({{ total_count }} {{ 'plant' if total_count == 1 else 'plants' }} available)
+          </span>
+        </div>
+
+        <!-- Sort Control -->
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <label for="catalog-sort" style="font-size: 0.875rem; font-weight: 600; color: var(--text-muted);">Sort By:</label>
+          <select id="catalog-sort" onchange="location.href=this.value" style="padding: 7px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-full); font-size: 0.85rem; background: #ffffff; cursor: pointer; font-weight: 600;">
+            <option value="{{ url_for('catalog', category=current_category, search=search_query, min_price=min_price, max_price=max_price, difficulty=current_difficulty, sort='popular') }}" {{ 'selected' if current_sort == 'popular' else '' }}>Most Popular</option>
+            <option value="{{ url_for('catalog', category=current_category, search=search_query, min_price=min_price, max_price=max_price, difficulty=current_difficulty, sort='price_asc') }}" {{ 'selected' if current_sort == 'price_asc' else '' }}>Price: Low to High</option>
+            <option value="{{ url_for('catalog', category=current_category, search=search_query, min_price=min_price, max_price=max_price, difficulty=current_difficulty, sort='price_desc') }}" {{ 'selected' if current_sort == 'price_desc' else '' }}>Price: High to Low</option>
+            <option value="{{ url_for('catalog', category=current_category, search=search_query, min_price=min_price, max_price=max_price, difficulty=current_difficulty, sort='name_asc') }}" {{ 'selected' if current_sort == 'name_asc' else '' }}>Name: A to Z</option>
+            <option value="{{ url_for('catalog', category=current_category, search=search_query, min_price=min_price, max_price=max_price, difficulty=current_difficulty, sort='newest') }}" {{ 'selected' if current_sort == 'newest' else '' }}>Newest Arrivals</option>
+          </select>
+        </div>
+      </div>
+
+      {% if plants %}
+        <div class="product-grid">
+          {% for plant in plants %}
+            <div class="product-card">
+              <div class="product-card-img-wrap">
+                <a href="{{ url_for('plant_details', slug=plant.slug) }}">
+                  <img src="{{ plant.image_url }}" alt="{{ plant.name }}" class="product-card-img" loading="lazy">
+                </a>
+                <div class="product-badges">
+                  {% if plant.is_bestseller %}
+                    <span class="badge badge-bestseller">Best Seller</span>
+                  {% elif plant.is_featured %}
+                    <span class="badge badge-featured">Featured</span>
+                  {% endif %}
+
+                  {% if plant.discount_price and plant.discount_price < plant.price %}
+                    {% set disc_pct = (((plant.price - plant.discount_price) / plant.price) * 100) | round | int %}
+                    <span class="badge badge-discount">{{ disc_pct }}% OFF</span>
+                  {% endif %}
+                </div>
+                <button type="button" class="wishlist-toggle-btn" data-plant-id="{{ plant.id }}" title="Add to Wishlist">
+                  <i data-lucide="heart" style="width: 18px; height: 18px;"></i>
+                </button>
+              </div>
+
+              <div class="product-card-body">
+                <span class="product-category">{{ plant.category_name }}</span>
+                <h3 class="product-title">
+                  <a href="{{ url_for('plant_details', slug=plant.slug) }}">{{ plant.name }}</a>
+                </h3>
+
+                <div class="product-rating">
+                  <i data-lucide="star" style="width: 14px; height: 14px; fill: #d97706;"></i>
+                  <span>{{ plant.avg_rating or 5.0 }} ({{ plant.review_count or 0 }})</span>
+                </div>
+
+                <div class="product-price-row">
+                  {% if plant.discount_price and plant.discount_price < plant.price %}
+                    <span class="current-price">{{ plant.discount_price | currency }}</span>
+                    <span class="original-price">{{ plant.price | currency }}</span>
+                  {% else %}
+                    <span class="current-price">{{ plant.price | currency }}</span>
+                  {% endif %}
+                </div>
+
+                <div class="product-card-actions">
+                  <button type="button" class="btn btn-primary btn-sm ajax-add-to-cart" data-plant-id="{{ plant.id }}">
+                    <i data-lucide="shopping-bag" style="width: 16px; height: 16px;"></i> Add to Cart
+                  </button>
+                  <a href="{{ url_for('plant_details', slug=plant.slug) }}" class="btn btn-secondary btn-sm" title="View Details">
+                    <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state-glass" style="text-align: center; padding: 3rem 1.5rem;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #15803d; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto;">
+            <i data-lucide="sprout" style="width: 32px; height: 32px;"></i>
+          </div>
+          <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main);">No Plants Found</h3>
+          <p style="color: var(--text-muted); max-width: 440px; margin: 0 auto 1.5rem auto; font-size: 0.95rem; line-height: 1.6;">
+            We couldn't find any plants matching your current filter. Try adjusting your search or category selection.
+          </p>
+          <a href="{{ url_for('catalog') }}" class="btn btn-outline btn-sm">
+            <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> View All Categories
+          </a>
+          {% if current_user and current_user.role == 'admin' %}
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
+              <span style="font-size: 0.85rem; color: #166534; font-weight: 600;">Admin Mode:</span>
+              <a href="{{ url_for('admin_plant_add') }}" class="btn btn-primary btn-sm" style="margin-left: 0.5rem;">
+                <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add Plant
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </main>
+  </div>
+</div>
+{% endblock %}

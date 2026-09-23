@@ -1,0 +1,89 @@
+﻿{% extends "admin/base_admin.html" %}
+
+{% block title %}Abandoned Carts & WhatsApp Recovery - Greeni5 Admin{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header" style="flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h3 class="admin-card-title"><i data-lucide="shopping-bag" style="width: 20px;"></i> Abandoned Cart Tracking & 1-Click WhatsApp Recovery</h3>
+      <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Convert visitors who added plants to cart but didn't finish payment. Send them a personalized recovery offer!</p>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Shopper Details</th>
+          <th>Contact Info</th>
+          <th>Plants Left in Cart</th>
+          <th>Cart Value</th>
+          <th>Last Active</th>
+          <th>Recovery Status</th>
+          <th style="text-align: right;">1-Click Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cart in carts %}
+        <tr>
+          <td>
+            <strong>{{ cart.customer_name or 'Greeni5 Plant Lover' }}</strong>
+            {% if cart.user_id %}
+              <div style="font-size: 0.75rem; color: #16a34a; font-weight: 600;">Registered Customer</div>
+            {% else %}
+              <div style="font-size: 0.75rem; color: #94a3b8;">Guest Shopper</div>
+            {% endif %}
+          </td>
+          <td>
+            <div>{{ cart.email or 'N/A' }}</div>
+            <div style="font-weight: 700; color: #0f172a; font-size: 0.9rem;">{{ cart.phone or 'N/A' }}</div>
+          </td>
+          <td>
+            <div style="font-size: 0.88rem; max-width: 250px; line-height: 1.4;">
+              {{ cart.items_summary }}
+            </div>
+          </td>
+          <td>
+            <strong style="color: #15803d; font-size: 1.05rem;">{{ cart.total_amount | currency }}</strong>
+          </td>
+          <td style="font-size: 0.82rem; color: #64748b;">
+            {{ cart.updated_at }}
+          </td>
+          <td>
+            {% if cart.recovered %}
+              <span class="badge badge-accepted">Converted Order!</span>
+            {% else %}
+              <span class="badge badge-pending">Waiting Recovery</span>
+            {% endif %}
+          </td>
+          <td style="text-align: right;">
+            {% if cart.phone and not cart.recovered %}
+              {% set wa_phone = cart.phone | replace(' ', '') | replace('-', '') | replace('+', '') %}
+              {% if not wa_phone.startswith('91') and wa_phone|length == 10 %}
+                {% set wa_phone = '91' ~ wa_phone %}
+              {% endif %}
+              {% set msg = 'Hello ' ~ (cart.customer_name or 'Friend') ~ '! 🌿 We noticed you left some lovely plants in your Greeni5 nursery cart. Complete your order today and get 5% OFF using code GREEN5! Click here to complete: http://127.0.0.1:5000/cart' %}
+              <a href="https://wa.me/{{ wa_phone }}?text={{ msg | urlencode }}" target="_blank" class="btn btn-sm" style="background: #22c55e; color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 6px; font-weight: 600;">
+                <i data-lucide="message-circle" style="width: 14px;"></i> WhatsApp 5% Offer
+              </a>
+            {% elif cart.recovered %}
+              <span style="color: #15803d; font-size: 0.85rem; font-weight: 700;">&#10004; Purchased</span>
+            {% else %}
+              <span style="color: #94a3b8; font-size: 0.8rem;">No Phone Recorded</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 2.5rem; color: #64748b;">
+            <i data-lucide="smile" style="width: 32px; height: 32px; color: #15803d; margin-bottom: 0.5rem;"></i>
+            <div>All active carts are either checked out or none recorded yet!</div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

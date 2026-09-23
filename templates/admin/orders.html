@@ -1,0 +1,128 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Manage Orders - Greeni5 Admin{% endblock %}
+{% block page_title %}Customer Order Management{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header" style="flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h3>All Nursery Orders</h3>
+      <p style="font-size: 0.85rem; color: #64748b;">Accept, fulfill, ship, and update live order delivery status</p>
+    </div>
+
+    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+      <!-- Search Form -->
+      <form action="{{ url_for('admin_orders') }}" method="GET" style="display: flex; gap: 0.5rem;">
+        <input type="text" name="search" placeholder="Order #, customer, email..." value="{{ search }}" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem;">
+        <button type="submit" class="btn btn-secondary btn-sm"><i data-lucide="search" style="width: 14px;"></i></button>
+      </form>
+
+      <!-- Status Filter Tabs -->
+      <select onchange="location.href=this.value" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; background: #ffffff;">
+        <option value="{{ url_for('admin_orders', status='All') }}" {{ 'selected' if not current_status or current_status == 'All' else '' }}>All Statuses</option>
+        <option value="{{ url_for('admin_orders', status='Pending') }}" {{ 'selected' if current_status == 'Pending' else '' }}>Pending</option>
+        <option value="{{ url_for('admin_orders', status='Accepted') }}" {{ 'selected' if current_status == 'Accepted' else '' }}>Accepted</option>
+        <option value="{{ url_for('admin_orders', status='Packed') }}" {{ 'selected' if current_status == 'Packed' else '' }}>Packed</option>
+        <option value="{{ url_for('admin_orders', status='Shipped') }}" {{ 'selected' if current_status == 'Shipped' else '' }}>Shipped</option>
+        <option value="{{ url_for('admin_orders', status='Delivered') }}" {{ 'selected' if current_status == 'Delivered' else '' }}>Delivered</option>
+        <option value="{{ url_for('admin_orders', status='Rejected') }}" {{ 'selected' if current_status == 'Rejected' else '' }}>Rejected</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Order Details</th>
+          <th>Customer & Address</th>
+          <th>Items Ordered</th>
+          <th>Total & Payment</th>
+          <th>Status Workflow</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if orders %}
+          {% for entry in orders %}
+            {% set ord = entry.order %}
+            {% set items = entry.order_items %}
+            <tr>
+              <td>
+                <div style="font-weight: 800; color: var(--primary);">#{{ ord.order_number }}</div>
+                <div style="font-size: 0.78rem; color: #64748b;">{{ ord.created_at }}</div>
+              </td>
+              <td>
+                <div style="font-weight: 700;">{{ ord.customer_name }}</div>
+                <div style="font-size: 0.8rem; color: #475569;">📞 {{ ord.customer_phone }}</div>
+                <div style="font-size: 0.75rem; color: #64748b; max-width: 200px;">{{ ord.shipping_address }}, {{ ord.city }}</div>
+              </td>
+              <td>
+                <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                  {% for item in items %}
+                    <div style="font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+                      <span style="font-weight: 700; color: var(--primary);">{{ item.quantity }}x</span>
+                      <span>{{ item.plant_name }}</span>
+                    </div>
+                  {% endfor %}
+                </div>
+              </td>
+              <td>
+                <div style="font-weight: 800; font-size: 1rem; color: #0f172a;">{{ ord.total_amount | currency }}</div>
+                <div style="font-size: 0.75rem; color: #64748b;">{{ ord.payment_method }} ({{ ord.payment_status }})</div>
+              </td>
+              <td>
+                <!-- Live Status Dropdown Update Form -->
+                <form action="{{ url_for('admin_order_status_update', order_id=ord.id) }}" method="POST" style="margin-bottom: 6px;">
+                  <select name="order_status" class="status-select" style="font-size: 0.82rem; font-weight: 700;" onchange="this.form.submit()">
+                    <option value="Pending" {{ 'selected' if ord.order_status == 'Pending' else '' }}>Pending</option>
+                    <option value="Accepted" {{ 'selected' if ord.order_status == 'Accepted' else '' }}>Accepted</option>
+                    <option value="Packed" {{ 'selected' if ord.order_status == 'Packed' else '' }}>Packed</option>
+                    <option value="Shipped" {{ 'selected' if ord.order_status == 'Shipped' else '' }}>Shipped</option>
+                    <option value="Delivered" {{ 'selected' if ord.order_status == 'Delivered' else '' }}>Delivered</option>
+                    <option value="Rejected" {{ 'selected' if ord.order_status == 'Rejected' else '' }}>Rejected</option>
+                  </select>
+                </form>
+
+                <!-- Courier AWB Inline Update -->
+                <form action="{{ url_for('admin_order_tracking_update', order_id=ord.id) }}" method="POST" style="display: flex; gap: 4px; font-size: 0.75rem;">
+                  <input type="text" name="courier_name" value="{{ ord.courier_name or '' }}" placeholder="Courier (Delhivery)" style="padding: 2px 4px; font-size: 0.75rem; width: 85px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                  <input type="text" name="tracking_number" value="{{ ord.tracking_number or '' }}" placeholder="AWB #" style="padding: 2px 4px; font-size: 0.75rem; width: 80px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                  <button type="submit" class="btn btn-sm" style="padding: 2px 6px; font-size: 0.75rem; background: #e2e8f0;">Save</button>
+                </form>
+              </td>
+              <td>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <a href="{{ url_for('admin_order_invoice', order_id=ord.id) }}" target="_blank" class="btn btn-primary btn-sm" title="Print Delivery Packing Slip & Invoice" style="font-size: 0.78rem; padding: 4px 8px;">
+                    <i data-lucide="printer" style="width: 13px;"></i> Print Slip
+                  </a>
+                  <a href="{{ url_for('order_tracking', order_number=ord.order_number) }}" target="_blank" class="btn btn-outline btn-sm" title="View Customer Tracking Timeline" style="font-size: 0.78rem; padding: 4px 8px;">
+                    <i data-lucide="map-pin" style="width: 13px;"></i> Track
+                  </a>
+                  {% if ord.customer_phone %}
+                    {% set wa_num = ord.customer_phone | replace(' ', '') | replace('-', '') | replace('+', '') %}
+                    {% if not wa_num.startswith('91') and wa_num|length == 10 %}
+                      {% set wa_num = '91' ~ wa_num %}
+                    {% endif %}
+                    {% set wa_txt = 'Hello ' ~ ord.customer_name ~ '! 🌿 Your Greeni5 Plant Nursery order #' ~ ord.order_number ~ ' is ' ~ ord.order_status ~ '. Track here: http://127.0.0.1:5000/order/track/' ~ ord.order_number %}
+                    <a href="https://wa.me/{{ wa_num }}?text={{ wa_txt | urlencode }}" target="_blank" class="btn btn-sm" style="background: #22c55e; color: white; font-size: 0.75rem; padding: 4px 8px;" title="Send WhatsApp Update">
+                      <i data-lucide="message-circle" style="width: 12px;"></i> WhatsApp
+                    </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 3rem; color: #64748b;">
+              No orders found matching the filter.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

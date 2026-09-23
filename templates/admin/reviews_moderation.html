@@ -1,0 +1,98 @@
+﻿{% extends "admin/base_admin.html" %}
+
+{% block title %}Customer Photo Reviews Moderation - Greeni5 Admin{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header">
+    <div>
+      <h3 class="admin-card-title"><i data-lucide="star" style="width: 20px;"></i> Customer Photo Reviews & Testimonials Moderation</h3>
+      <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Approve authentic customer photos and reviews to display with the "Verified Plant Parent" badge on the storefront.</p>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Plant</th>
+          <th>Customer</th>
+          <th>Rating</th>
+          <th>Balcony / Plant Photo</th>
+          <th>Feedback Comment</th>
+          <th>Status</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rev in reviews %}
+        <tr>
+          <td>
+            <strong>{{ rev.plant_name }}</strong>
+          </td>
+          <td>
+            <div><strong>{{ rev.user_name }}</strong></div>
+            <div style="font-size: 0.75rem; color: #94a3b8;">{{ rev.created_at }}</div>
+          </td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 2px; color: #f59e0b;">
+              {% for i in range(rev.rating) %}
+                &#9733;
+              {% endfor %}
+              <span style="color: #475569; font-size: 0.85rem; margin-left: 4px;">({{ rev.rating }}/5)</span>
+            </div>
+          </td>
+          <td>
+            {% if rev.photo_url %}
+              <a href="{{ rev.photo_url }}" target="_blank">
+                <img src="{{ rev.photo_url }}" alt="Plant Photo" style="width: 54px; height: 54px; border-radius: 8px; object-fit: cover; border: 1.5px solid #22c55e;">
+              </a>
+            {% else %}
+              <span style="color: #94a3b8; font-size: 0.8rem;">Text only</span>
+            {% endif %}
+          </td>
+          <td style="font-size: 0.9rem; color: #1e293b; max-width: 280px; line-height: 1.5;">
+            "{{ rev.comment }}"
+          </td>
+          <td>
+            {% if rev.is_approved %}
+              <span class="badge badge-accepted">Live & Verified</span>
+            {% else %}
+              <span class="badge badge-pending">Pending Approval</span>
+            {% endif %}
+          </td>
+          <td style="text-align: right;">
+            <div style="display: inline-flex; gap: 6px;">
+              {% if not rev.is_approved %}
+                <form action="{{ url_for('admin_review_approve', review_id=rev.id) }}" method="POST" style="display:inline;">
+                  <button type="submit" class="btn btn-primary btn-sm" title="Approve review">
+                    <i data-lucide="check" style="width: 14px;"></i> Approve
+                  </button>
+                </form>
+              {% else %}
+                <form action="{{ url_for('admin_review_reject', review_id=rev.id) }}" method="POST" style="display:inline;">
+                  <button type="submit" class="btn btn-secondary btn-sm" title="Hide review">
+                    Hide
+                  </button>
+                </form>
+              {% endif %}
+              <form action="{{ url_for('admin_review_delete', review_id=rev.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this review completely?');">
+                <button type="submit" class="btn btn-sm" style="background: #fee2e2; color: #dc2626; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
+                  <i data-lucide="trash-2" style="width: 14px;"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 2.5rem; color: #64748b;">
+            No reviews submitted yet!
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
