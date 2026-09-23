@@ -20,20 +20,24 @@ document.addEventListener("DOMContentLoaded", () => {
   initLucideIcons();
 
   // Toast Notification System
-  window.showToast = function(message, type = "success") {
+  window.showToast = function(message, type = "success", showCartLink = true) {
     let container = document.getElementById("toast-container");
     if (!container) {
       container = document.createElement("div");
       container.id = "toast-container";
       container.style.cssText = `
         position: fixed;
-        bottom: 24px;
-        right: 24px;
-        z-index: 9999;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99999;
         display: flex;
         flex-direction: column;
+        align-items: center;
         gap: 10px;
         pointer-events: none;
+        width: 92%;
+        max-width: 480px;
       `;
       document.body.appendChild(container);
     }
@@ -43,20 +47,27 @@ document.addEventListener("DOMContentLoaded", () => {
     toast.style.cssText = `
       background: ${bgColor};
       color: white;
-      padding: 12px 20px;
+      padding: 12px 18px;
       border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.4);
       font-size: 0.925rem;
-      font-weight: 600;
+      font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
+      gap: 12px;
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(-20px);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       pointer-events: auto;
+      width: 100%;
     `;
-    toast.innerHTML = `<span>${message}</span>`;
+
+    let actionBtn = showCartLink && type === "success"
+      ? `<a href="/cart" style="background: #ffffff; color: #15803d; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; text-decoration: none; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">View Cart 🛒 &rarr;</a>`
+      : '';
+
+    toast.innerHTML = `<span style="display: flex; align-items: center; gap: 8px;">✓ ${message}</span> ${actionBtn}`;
     container.appendChild(toast);
 
     setTimeout(() => {
@@ -66,9 +77,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTimeout(() => {
       toast.style.opacity = "0";
-      toast.style.transform = "translateY(20px)";
+      toast.style.transform = "translateY(-20px)";
       setTimeout(() => toast.remove(), 300);
-    }, 3500);
+    }, 4500);
   };
 
   // Mobile Navigation Menu Toggle
@@ -149,8 +160,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const quantity = qtyInput ? qtyInput.value : 1;
       const variantInput = document.getElementById("selected-variant-id");
       const variantId = variantInput ? variantInput.value : "";
+      const originalBtnContent = button.innerHTML;
 
       try {
+        button.disabled = true;
+        button.innerHTML = `<span>Adding...</span>`;
+
         const formData = new FormData();
         formData.append("quantity", quantity);
         if (variantId) {
@@ -167,18 +182,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const data = await response.json();
         if (data.success) {
-          window.showToast(data.message, "success");
+          window.showToast(data.message, "success", true);
           document.querySelectorAll(".cart-count").forEach(el => {
             if (el.id !== "wishlist-count") {
               el.textContent = data.cart_count;
               el.style.display = data.cart_count > 0 ? "flex" : "none";
             }
           });
+
+          // Immediate button visual feedback
+          button.style.background = "#15803d";
+          button.innerHTML = `<span>✓ Added to Cart!</span>`;
+          setTimeout(() => {
+            button.disabled = false;
+            button.style.background = "";
+            button.innerHTML = originalBtnContent;
+          }, 2000);
         } else {
-          window.showToast(data.message || "Could not add to cart.", "warning");
+          button.disabled = false;
+          button.innerHTML = originalBtnContent;
+          window.showToast(data.message || "Could not add to cart.", "warning", false);
         }
       } catch (err) {
         console.error("Cart error:", err);
+        button.disabled = false;
+        button.innerHTML = originalBtnContent;
         window.location.href = `/cart/add/${plantId}?quantity=${quantity}`;
       }
     });
