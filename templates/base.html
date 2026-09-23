@@ -14,13 +14,10 @@
 
   <!-- Top Announcement Bar -->
   {% if active_flash_sale %}
-    <div class="top-notice-bar" style="background: linear-gradient(90deg, #15803d, #047857, #15803d); color: #ffffff; padding: 8px 1rem; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap;">
-      <span>⚡ <strong>{{ active_flash_sale.title }}:</strong> {{ active_flash_sale.banner_text or (active_flash_sale.discount_pct ~ '% OFF Sitewide!') }}</span>
-      <div style="background: rgba(0,0,0,0.25); padding: 3px 10px; border-radius: 20px; font-family: monospace; font-size: 0.95rem; letter-spacing: 1px; color: #fef08a; display: inline-flex; align-items: center; gap: 6px;">
-        <span style="font-size: 0.8rem; text-transform: uppercase;">Ends In:</span>
-        <span id="flash-sale-timer" data-endtime="{{ active_flash_sale.ends_at }}">00:00:00</span>
-      </div>
-      <a href="{{ url_for('catalog') }}" style="color: #ffffff; text-decoration: underline; font-size: 0.85rem;">Shop Sale &rarr;</a>
+    <div class="top-notice-bar">
+      <span>⚡ <strong>{{ active_flash_sale.title }}:</strong> Flat {{ active_flash_sale.discount_pct | int }}% OFF Sitewide! Free shipping on orders over ₹999</span>
+      <span>•</span>
+      <a href="{{ url_for('catalog') }}" style="color: #fef08a; text-decoration: underline; font-size: 0.85rem; font-weight: 700;">Shop Sale &rarr;</a>
     </div>
   {% else %}
     <div class="top-notice-bar">
@@ -231,7 +228,7 @@
         <div style="display: flex; gap: 1.5rem;">
           <a href="{{ url_for('about') }}">Privacy Policy</a>
           <a href="{{ url_for('faq') }}">Terms of Service</a>
-          <a href="{{ url_for('login') }}">Admin Login</a>
+          <a href="{{ url_for('contact') }}">Help & Support</a>
         </div>
       </div>
     </div>
