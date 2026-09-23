@@ -3,8 +3,12 @@
  */
 
 function initLucideIcons() {
-  if (window.lucide && typeof window.lucide.createIcons === "function") {
-    window.lucide.createIcons();
+  try {
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      window.lucide.createIcons();
+    }
+  } catch (err) {
+    console.warn("Lucide icons init skipped:", err);
   }
 }
 

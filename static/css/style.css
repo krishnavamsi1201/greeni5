@@ -894,6 +894,11 @@ img {
 
 .wishlist-toggle-btn.active svg {
   fill: #ef4444;
+  stroke: #ef4444;
+}
+
+.wishlist-toggle-btn:hover svg {
+  stroke: #ef4444;
 }
 
 .product-card-body {
