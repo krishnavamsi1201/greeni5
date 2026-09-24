@@ -575,20 +575,28 @@ def add_to_cart(plant_id):
 
     total_cart_count = sum(item.get('quantity', 1) if isinstance(item, dict) else 1 for item in cart.values())
 
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json or 'application/json' in request.headers.get('Accept', ''):
         return jsonify({
             'success': True,
             'message': f"Added {plant['name']} to cart!",
+            'plant_name': plant['name'],
             'cart_count': total_cart_count
         })
 
     flash(f"Added {plant['name']} to cart!", 'success')
-    return redirect(request.referrer or url_for('cart'))
+    referrer = request.referrer
+    if referrer and ('catalog' in referrer or 'plant' in referrer):
+        anchor = f"#plant-{plant_id}"
+        if '#' not in referrer:
+            return redirect(referrer + anchor)
+    return redirect(referrer or url_for('cart'))
 
 @app.route('/cart/add-addon/<int:addon_id>', methods=['GET', 'POST'])
 def add_addon_to_cart(addon_id):
     addon = query_db('SELECT * FROM addons WHERE id = ?', (addon_id,), one=True)
     if not addon:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+            return jsonify({'success': False, 'message': 'Add-on combo not found'}), 404
         flash('Add-on combo not found.', 'warning')
         return redirect(url_for('cart'))
 
@@ -604,6 +612,14 @@ def add_addon_to_cart(addon_id):
     session['cart'] = cart
     session.modified = True
     track_abandoned_cart()
+
+    total_cart_count = sum(item.get('quantity', 1) if isinstance(item, dict) else 1 for item in cart.values())
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json or 'application/json' in request.headers.get('Accept', ''):
+        return jsonify({
+            'success': True,
+            'message': f"Added {addon['name']} combo to your cart!",
+            'cart_count': total_cart_count
+        })
 
     flash(f"Added {addon['name']} combo to your cart!", 'success')
     return redirect(request.referrer or url_for('cart'))
@@ -707,6 +723,19 @@ def add_review(plant_id):
         flash('Please provide a comment for your review.', 'warning')
 
     return redirect(url_for('plant_details', slug=plant['slug']))
+
+@app.route('/order/claim-replacement', methods=['GET'])
+@app.route('/orders/claim-replacement', methods=['GET'])
+def general_claim_replacement():
+    user_id = session.get('user_id')
+    if user_id:
+        latest_order = query_db('SELECT id FROM orders WHERE user_id = ? ORDER BY id DESC LIMIT 1', (user_id,), one=True)
+        if latest_order:
+            return redirect(url_for('customer_claim_replacement', order_id=latest_order['id']))
+        flash('You have no active orders to claim replacement for.', 'info')
+        return redirect(url_for('dashboard'))
+    flash('Please enter your order number below to claim replacement for your shipment.', 'info')
+    return redirect(url_for('track_lookup'))
 
 @app.route('/orders/<int:order_id>/claim-replacement', methods=['GET', 'POST'])
 def customer_claim_replacement(order_id):

@@ -15,7 +15,7 @@
   <!-- Top Announcement Bar -->
   {% if active_flash_sale %}
     <div class="top-notice-bar">
-      <span>⚡ <strong>{{ active_flash_sale.title }}:</strong> Flat {{ active_flash_sale.discount_pct | int }}% OFF Sitewide! Free shipping on orders over ₹999</span>
+      <span>⚡ <strong>{{ active_flash_sale.title }}:</strong> Flat {{ active_flash_sale.discount_pct | int }}% OFF Sitewide! Ends in: <strong id="flash-sale-timer" data-endtime="{{ active_flash_sale.ends_at }}" style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px; font-family: monospace;">--:--:--</strong></span>
       <span>•</span>
       <a href="{{ url_for('catalog') }}" style="color: #fef08a; text-decoration: underline; font-size: 0.85rem; font-weight: 700;">Shop Sale &rarr;</a>
     </div>
@@ -237,6 +237,7 @@
     </div>
   </footer>
 
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

@@ -139,15 +139,15 @@
 
       <!-- Add to Cart Form -->
       {% if plant.stock > 0 %}
-        <form action="{{ url_for('add_to_cart', plant_id=plant.id) }}" method="POST" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
+        <form action="{{ url_for('add_to_cart', plant_id=plant.id) }}" method="POST" onsubmit="return false;" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
           <input type="hidden" name="variant_id" id="selected-variant-id" value="{{ variants[0].id if variants else '' }}">
           <div class="qty-control">
             <button type="button" class="qty-btn minus">-</button>
             <input type="number" id="detail-quantity" name="quantity" class="qty-input qty-val" value="1" min="1" max="{{ plant.stock }}">
             <button type="button" class="qty-btn plus">+</button>
           </div>
-          <button type="submit" class="btn btn-primary btn-lg ajax-add-to-cart" data-plant-id="{{ plant.id }}" style="flex: 1;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Add to Shopping Cart
+          <button type="button" class="btn btn-primary btn-lg ajax-add-to-cart" data-plant-id="{{ plant.id }}" style="flex: 1;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; pointer-events: none;"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Add to Shopping Cart
           </button>
         </form>
       {% else %}
@@ -174,9 +174,9 @@
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
                   <span style="font-weight: 800; color: #15803d; font-size: 0.9rem;">+{{ addon.price | currency }}</span>
-                  <a href="{{ url_for('add_addon_to_cart', addon_id=addon.id) }}" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 3px 8px;">
+                  <button type="button" class="btn btn-outline btn-sm ajax-add-addon" data-addon-id="{{ addon.id }}" style="font-size: 0.75rem; padding: 3px 8px;">
                     + Add
-                  </a>
+                  </button>
                 </div>
               </div>
             {% endfor %}
