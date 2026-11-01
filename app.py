@@ -354,8 +354,8 @@ def catalog():
         selected_category = query_db('SELECT * FROM categories WHERE slug = ?', (category_slug,), one=True)
 
     if search_query:
-        sql += ' AND (p.name LIKE ? OR p.description LIKE ?)'
-        params.extend([f'%{search_query}%', f'%{search_query}%'])
+        sql += ' AND (p.name LIKE ? OR p.description LIKE ? OR c.name LIKE ?)'
+        params.extend([f'%{search_query}%', f'%{search_query}%', f'%{search_query}%'])
 
     if min_price is not None:
         sql += ' AND COALESCE(p.discount_price, p.price) >= ?'

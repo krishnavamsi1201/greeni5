@@ -105,7 +105,7 @@
                     {% if not wa_num.startswith('91') and wa_num|length == 10 %}
                       {% set wa_num = '91' ~ wa_num %}
                     {% endif %}
-                    {% set wa_txt = 'Hello ' ~ ord.customer_name ~ '! 🌿 Your Greeni5 Plant Nursery order #' ~ ord.order_number ~ ' is ' ~ ord.order_status ~ '. Track here: http://127.0.0.1:5000/order/track/' ~ ord.order_number %}
+                    {% set wa_txt = 'Hello ' ~ ord.customer_name ~ '! 🌿 Your Greeni5 Plant Nursery order #' ~ ord.order_number ~ ' is ' ~ ord.order_status ~ '. Track here: ' ~ url_for('order_tracking', order_number=ord.order_number, _external=True) %}
                     <a href="https://wa.me/{{ wa_num }}?text={{ wa_txt | urlencode }}" target="_blank" class="btn btn-sm" style="background: #22c55e; color: white; font-size: 0.75rem; padding: 4px 8px;" title="Send WhatsApp Update">
                       <i data-lucide="message-circle" style="width: 12px;"></i> WhatsApp
                     </a>
