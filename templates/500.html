@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Temporary Greenhouse Hitch (500) - Greeni5 Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 5rem; padding-bottom: 6rem; text-align: center; max-width: 650px;">
+  <div style="width: 88px; height: 88px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+    <i data-lucide="alert-triangle" style="width: 44px; height: 44px;"></i>
+  </div>
+  <h1 style="font-size: 2.6rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">500 - System Overload</h1>
+  <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.7; margin-bottom: 2rem;">
+    Our automated irrigation pumps hit a momentary hiccup. Our technical gardeners have been notified. Please try refreshing in a moment.
+  </p>
+
+  <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+      <i data-lucide="home" style="width: 18px;"></i> Return to Homepage
+    </a>
+    <a href="https://wa.me/919876543210" target="_blank" class="btn btn-outline btn-lg" style="color: #16a34a; border-color: #16a34a;">
+      <i data-lucide="message-circle" style="width: 18px;"></i> WhatsApp Support
+    </a>
+  </div>
+</div>
+{% endblock %}
