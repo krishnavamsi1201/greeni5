@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Shipping & Replacement Policy - Greeni5 Botanical Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3.5rem; padding-bottom: 5rem; max-width: 860px;">
+  <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 3rem; box-shadow: var(--shadow-sm);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+      <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(16, 185, 129, 0.12); color: var(--primary); display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="truck" style="width: 24px; height: 24px;"></i>
+      </div>
+      <div>
+        <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin: 0;">Shipping & 7-Day Guarantee Policy</h1>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">Careful packing & rapid dispatch across India</p>
+      </div>
+    </div>
+
+    <div style="color: #334155; line-height: 1.8; font-size: 0.98rem;">
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">1. Eco-Safe Plant Transit Packaging</h3>
+      <p>Every living plant is thoroughly hydrated before packaging and shielded inside custom corrugated shockproof planters with organic coco-peat root ball moisture wraps. This ensures your botanical companion stays refreshed for up to 8 days in transit.</p>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">2. Delivery Timelines</h3>
+      <ul style="padding-left: 1.25rem; margin-bottom: 1rem;">
+        <li><strong>Metro Cities:</strong> Delivered within 2 to 4 business days.</li>
+        <li><strong>Rest of India:</strong> Delivered within 3 to 6 business days.</li>
+        <li>Orders placed on Saturday evening and Sunday are dispatched fresh on Monday morning to minimize weekend hub delays.</li>
+      </ul>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">3. Free Shipping Eligibility</h3>
+      <p>Orders totaling ₹999 or more automatically qualify for <strong>FREE Express Courier Shipping</strong> across India. For orders below ₹999, a nominal standard flat delivery fee of ₹99 is applied at checkout.</p>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">4. 7-Day Live Plant Replacement Guarantee</h3>
+      <p>In rare events of transit mishandling (such as root breakage or severe drying), our 7-Day Replacement Guarantee protects you 100%. Simply visit your order tracking page or our <a href="{{ url_for('general_claim_replacement') }}" style="color: var(--primary); font-weight: 600;">Damage Claims</a> portal, upload a quick snapshot, and we will courier a brand new healthy plant immediately at zero extra cost.</p>
+    </div>
+
+    <div style="margin-top: 2.5rem; pt: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <a href="{{ url_for('catalog') }}" class="btn btn-primary">
+        ← Shop Fresh Plants
+      </a>
+      <a href="{{ url_for('track_lookup') }}" class="btn btn-outline">
+        Track Existing Order →
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

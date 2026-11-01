@@ -139,15 +139,18 @@
 
       <!-- Add to Cart Form -->
       {% if plant.stock > 0 %}
-        <form action="{{ url_for('add_to_cart', plant_id=plant.id) }}" method="POST" onsubmit="return false;" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
+        <form action="{{ url_for('add_to_cart', plant_id=plant.id) }}" method="POST" onsubmit="return false;" style="display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap;">
           <input type="hidden" name="variant_id" id="selected-variant-id" value="{{ variants[0].id if variants else '' }}">
           <div class="qty-control">
             <button type="button" class="qty-btn minus">-</button>
             <input type="number" id="detail-quantity" name="quantity" class="qty-input qty-val" value="1" min="1" max="{{ plant.stock }}">
             <button type="button" class="qty-btn plus">+</button>
           </div>
-          <button type="button" class="btn btn-primary btn-lg ajax-add-to-cart" data-plant-id="{{ plant.id }}" style="flex: 1;">
+          <button type="button" class="btn btn-primary btn-lg ajax-add-to-cart" data-plant-id="{{ plant.id }}" style="flex: 1; min-width: 180px;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; pointer-events: none;"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Add to Shopping Cart
+          </button>
+          <button type="button" class="btn btn-secondary btn-lg buy-now-btn" data-plant-id="{{ plant.id }}" style="background: #eab308; color: #713f12; border: 1.5px solid #ca8a04; font-weight: 800; padding: 12px 20px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+            ⚡ Buy Now
           </button>
         </form>
       {% else %}

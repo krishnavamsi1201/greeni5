@@ -323,6 +323,45 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // 3b. Instant Buy Now (Direct to Checkout)
+  document.querySelectorAll(".buy-now-btn").forEach(button => {
+    button.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const plantId = button.dataset.plantId;
+      if (!plantId) return;
+
+      const qtyInput = document.getElementById("detail-quantity");
+      const quantity = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+      const variantInput = document.getElementById("selected-variant-id");
+      const variantId = variantInput ? variantInput.value : "";
+
+      button.disabled = true;
+      button.innerHTML = "<span>Proceeding to Checkout...</span>";
+
+      try {
+        const formData = new FormData();
+        formData.append("quantity", quantity);
+        if (variantId) formData.append("variant_id", variantId);
+
+        await fetch(`/cart/add/${plantId}`, {
+          method: "POST",
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "Accept": "application/json"
+          },
+          body: formData
+        });
+
+        window.location.href = "/checkout";
+      } catch (err) {
+        console.error("Buy now error:", err);
+        window.location.href = "/checkout";
+      }
+    });
+  });
+
   // 4. AJAX Add-on Combo Add to Cart
   document.querySelectorAll(".ajax-add-addon").forEach(button => {
     button.addEventListener("click", async (e) => {

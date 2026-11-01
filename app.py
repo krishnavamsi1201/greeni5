@@ -82,7 +82,7 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
             flash('Please log in to continue.', 'warning')
-            return redirect(url_for('login', next=request.url))
+            return redirect(url_for('login', next=request.full_path.rstrip('?')))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -91,7 +91,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
             flash('Admin authentication required.', 'warning')
-            return redirect(url_for('login', next=request.url))
+            return redirect(url_for('login', next=request.full_path.rstrip('?')))
         user = query_db('SELECT role FROM users WHERE id = ?', (session['user_id'],), one=True)
         if not user or user['role'] != 'admin':
             flash('Access denied. Administrator privileges required.', 'danger')
@@ -917,8 +917,14 @@ def login():
             flash(f"Welcome back, {user['name']}!", 'success')
 
             next_url = request.args.get('next')
-            if next_url and next_url.startswith('/'):
-                return redirect(next_url)
+            if next_url:
+                from urllib.parse import urlparse
+                parsed = urlparse(next_url)
+                if not parsed.netloc or parsed.netloc == request.host:
+                    target = parsed.path
+                    if parsed.query:
+                        target += '?' + parsed.query
+                    return redirect(target)
             if user['role'] == 'admin':
                 return redirect(url_for('admin_dashboard'))
             return redirect(url_for('dashboard'))
@@ -1087,6 +1093,43 @@ def contact():
 @app.route('/faq')
 def faq():
     return render_template('faq.html')
+
+@app.route('/order/track')
+def order_track_redirect():
+    return redirect(url_for('track_lookup'))
+
+@app.route('/admin/login')
+def admin_login_redirect():
+    return redirect(url_for('login', next='/admin'))
+
+@app.route('/my-orders')
+@app.route('/orders')
+def my_orders_redirect():
+    return redirect(url_for('dashboard'))
+
+@app.route('/care-guides')
+def care_guides_redirect():
+    return redirect(url_for('care_tips'))
+
+@app.route('/wishlist')
+def wishlist_redirect():
+    return redirect(url_for('catalog') + '#wishlist')
+
+@app.route('/terms')
+@app.route('/terms-of-service')
+def terms_of_service():
+    return render_template('terms.html')
+
+@app.route('/privacy')
+@app.route('/privacy-policy')
+def privacy_policy():
+    return render_template('privacy.html')
+
+@app.route('/shipping-policy')
+@app.route('/shipping')
+def shipping_policy():
+    return render_template('shipping_policy.html')
+
 
 # ==========================================
 # ADMIN DASHBOARD & MANAGEMENT ROUTES

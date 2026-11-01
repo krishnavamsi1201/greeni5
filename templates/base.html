@@ -228,9 +228,10 @@
 
       <div class="footer-bottom">
         <p>&copy; {{ now_year }} Greeni5 Botanical Nursery Pvt Ltd. All rights reserved.</p>
-        <div style="display: flex; gap: 1.5rem;">
-          <a href="{{ url_for('about') }}">Privacy Policy</a>
-          <a href="{{ url_for('faq') }}">Terms of Service</a>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <a href="{{ url_for('privacy_policy') }}">Privacy Policy</a>
+          <a href="{{ url_for('terms_of_service') }}">Terms of Service</a>
+          <a href="{{ url_for('shipping_policy') }}">Shipping & 7-Day Guarantee</a>
           <a href="{{ url_for('contact') }}">Help & Support</a>
         </div>
       </div>

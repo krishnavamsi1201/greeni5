@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Terms of Service - Greeni5 Botanical Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3.5rem; padding-bottom: 5rem; max-width: 860px;">
+  <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 3rem; box-shadow: var(--shadow-sm);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+      <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(16, 185, 129, 0.12); color: var(--primary); display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="file-text" style="width: 24px; height: 24px;"></i>
+      </div>
+      <div>
+        <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin: 0;">Terms of Service</h1>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">Last updated: October 2026</p>
+      </div>
+    </div>
+
+    <div style="color: #334155; line-height: 1.8; font-size: 0.98rem;">
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">1. Acceptance of Terms</h3>
+      <p>By accessing or ordering from Greeni5 Botanical Nursery ("Greeni5", "we", "us"), you agree to abide by these Terms of Service. If you do not agree with any part, please refrain from using our storefront.</p>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">2. Living Botanical Specimens</h3>
+      <p>Plants are natural biological organisms. Variations in foliage color, leaf size, stem branch count, and seasonal flowering are natural traits and not considered product defects. All plants are dispatched in well-ventilated, secure transit packaging to ensure healthy arrival.</p>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">3. Pricing & Billing</h3>
+      <p>All prices listed on Greeni5 are in Indian Rupees (INR) and include applicable Goods & Services Tax (GST). We reserve the right to revise prices, promotions, or catalog inventory without prior notification.</p>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">4. 7-Day Nursery Replacement Guarantee</h3>
+      <p>If your plant arrives physically damaged, wilted beyond recovery, or suffers transit trauma, you are protected by our 7-Day Guarantee. Simply upload a picture on our Damage Claims portal within 7 days of delivery for a hassle-free free replacement.</p>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">5. Contact & Support</h3>
+      <p>For inquiries regarding terms, delivery, or custom nursery bulk orders, reach out to our team at <a href="mailto:care@greeni5.com" style="color: var(--primary); font-weight: 600;">care@greeni5.com</a> or WhatsApp <a href="https://wa.me/919876543210" style="color: var(--primary); font-weight: 600;">+91 98765 43210</a>.</p>
+    </div>
+
+    <div style="margin-top: 2.5rem; pt: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <a href="{{ url_for('catalog') }}" class="btn btn-primary">
+        ← Return to Plant Catalog
+      </a>
+      <a href="{{ url_for('shipping_policy') }}" style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">
+        View Shipping & Replacement Policy →
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy - Greeni5 Botanical Nursery{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3.5rem; padding-bottom: 5rem; max-width: 860px;">
+  <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 3rem; box-shadow: var(--shadow-sm);">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+      <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(16, 185, 129, 0.12); color: var(--primary); display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="shield-check" style="width: 24px; height: 24px;"></i>
+      </div>
+      <div>
+        <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin: 0;">Privacy Policy</h1>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0;">Your data privacy & security is our commitment</p>
+      </div>
+    </div>
+
+    <div style="color: #334155; line-height: 1.8; font-size: 0.98rem;">
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">1. Information We Collect</h3>
+      <p>When you place an order, create an account, or contact our plant doctors, we collect necessary contact information (name, delivery address, phone number, and email address) to process shipments and provide plant care guidance.</p>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">2. Payment Security</h3>
+      <p>Greeni5 does not store sensitive payment card details or net banking credentials. All transactions are securely routed through certified, encrypted 256-bit payment gateways.</p>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">3. Use of Information</h3>
+      <p>Your details are strictly used to fulfill plant orders, dispatch courier tracking alerts via SMS/WhatsApp, and send watering schedules tailored to your purchased botanical varieties. We never sell or rent your data to third parties.</p>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">4. Cookies & Preferences</h3>
+      <p>We use session cookies solely to preserve your nursery shopping cart, wishlist items, and login state as you navigate between pages.</p>
+
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 1.75rem; margin-bottom: 0.75rem;">5. Data Retention & Deletion</h3>
+      <p>You may request modification or deletion of your profile data at any time by contacting our support desk at <a href="mailto:care@greeni5.com" style="color: var(--primary); font-weight: 600;">care@greeni5.com</a>.</p>
+    </div>
+
+    <div style="margin-top: 2.5rem; pt: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <a href="{{ url_for('catalog') }}" class="btn btn-primary">
+        ← Return to Plant Catalog
+      </a>
+      <a href="{{ url_for('terms_of_service') }}" style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">
+        View Terms of Service →
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
