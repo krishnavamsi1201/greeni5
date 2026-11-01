@@ -218,9 +218,23 @@ def get_cart_details():
         pass
 
     subtotal_after_discount = max(0.0, subtotal - flash_discount)
-    shipping = 0.0 if subtotal_after_discount >= 999 or subtotal_after_discount == 0 else 99.0
-    tax = round(subtotal_after_discount * 0.05, 2)
-    total = round(subtotal_after_discount + shipping + tax, 2)
+
+    # Coupon code discount calculation
+    coupon_discount = 0.0
+    applied_coupon = session.get('coupon')
+    if applied_coupon and subtotal_after_discount > 0:
+        c_type = applied_coupon.get('type')
+        c_val = float(applied_coupon.get('val', 0.0))
+        if c_type == 'pct':
+            coupon_discount = round(subtotal_after_discount * (c_val / 100.0), 2)
+        elif c_type == 'flat':
+            coupon_discount = min(subtotal_after_discount, c_val)
+
+    subtotal_after_coupon = max(0.0, subtotal_after_discount - coupon_discount)
+    is_freeship = (applied_coupon and applied_coupon.get('type') == 'freeship')
+    shipping = 0.0 if (subtotal_after_coupon >= 999 or subtotal_after_coupon == 0 or is_freeship) else 99.0
+    tax = round(subtotal_after_coupon * 0.05, 2)
+    total = round(subtotal_after_coupon + shipping + tax, 2)
 
     return {
         'items': cart_items, 'cart_items': cart_items,
@@ -228,11 +242,14 @@ def get_cart_details():
         'flash_discount': flash_discount,
         'active_flash_sale': active_flash_sale,
         'subtotal_after_discount': subtotal_after_discount,
+        'applied_coupon': applied_coupon,
+        'coupon_discount': coupon_discount,
+        'subtotal_after_coupon': subtotal_after_coupon,
         'shipping': shipping,
         'tax': tax,
         'total': total,
         'free_shipping_threshold': 999.0,
-        'amount_for_free_shipping': max(0.0, 999.0 - subtotal_after_discount)
+        'amount_for_free_shipping': max(0.0, 999.0 - subtotal_after_coupon)
     }
 
 def track_abandoned_cart():
@@ -678,9 +695,36 @@ def remove_from_cart(cart_key):
 @app.route('/cart/clear', methods=['POST'])
 def clear_cart():
     session['cart'] = {}
+    session.pop('coupon', None)
     session.modified = True
     flash('Cart has been cleared.', 'info')
     return redirect(url_for('cart'))
+
+@app.route('/cart/apply-coupon', methods=['POST'])
+def apply_coupon():
+    code = request.form.get('coupon_code', '').strip().upper()
+    valid_coupons = {
+        'GREEN5': {'code': 'GREEN5', 'type': 'pct', 'val': 5.0, 'desc': '5% Off WhatsApp Offer'},
+        'WELCOME10': {'code': 'WELCOME10', 'type': 'pct', 'val': 10.0, 'desc': '10% Welcome Discount'},
+        'NURSERY50': {'code': 'NURSERY50', 'type': 'flat', 'val': 50.0, 'desc': '₹50 Green Bonus'},
+        'FREESHIP': {'code': 'FREESHIP', 'type': 'freeship', 'val': 0.0, 'desc': '100% Free Shipping'}
+    }
+
+    if code in valid_coupons:
+        session['coupon'] = valid_coupons[code]
+        session.modified = True
+        flash(f"Coupon '{code}' applied successfully! {valid_coupons[code]['desc']}", 'success')
+    else:
+        flash(f"Invalid or expired coupon code '{code}'. Try GREEN5 or WELCOME10.", 'danger')
+
+    return redirect(request.referrer or url_for('cart'))
+
+@app.route('/cart/remove-coupon', methods=['POST', 'GET'])
+def remove_coupon():
+    session.pop('coupon', None)
+    session.modified = True
+    flash('Coupon code removed.', 'info')
+    return redirect(request.referrer or url_for('cart'))
 
 # ==========================================
 # REVIEWS & GUARANTEE CLAIMS
@@ -848,6 +892,7 @@ def checkout():
         ''', (user_id, email, phone))
 
         session['cart'] = {}
+        session.pop('coupon', None)
         session.modified = True
 
         flash(f'Order #{order_num} has been placed successfully!', 'success')

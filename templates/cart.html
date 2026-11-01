@@ -88,10 +88,42 @@
       <div class="summary-card">
         <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Order Summary</h3>
 
+        <!-- Coupon Input Box -->
+        <div style="margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px dashed var(--border);">
+          {% if cart.applied_coupon %}
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 8px; padding: 8px 12px;">
+              <div>
+                <span style="font-weight: 800; font-size: 0.88rem; color: #065f46;">🎟️ {{ cart.applied_coupon.code }} Applied</span>
+                <div style="font-size: 0.75rem; color: #047857;">{{ cart.applied_coupon.desc }}</div>
+              </div>
+              <a href="{{ url_for('remove_coupon') }}" style="color: #dc2626; font-size: 0.8rem; font-weight: 700; text-decoration: none;">Remove</a>
+            </div>
+          {% else %}
+            <form action="{{ url_for('apply_coupon') }}" method="POST" style="display: flex; gap: 6px;">
+              <input type="text" name="coupon_code" placeholder="Coupon (e.g. GREEN5)" required style="flex: 1; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; text-transform: uppercase;">
+              <button type="submit" class="btn btn-secondary btn-sm" style="font-size: 0.85rem; padding: 8px 14px; font-weight: 700;">Apply</button>
+            </form>
+          {% endif %}
+        </div>
+
         <div class="summary-row">
           <span>Items Subtotal</span>
           <span style="font-weight: 600; color: var(--text-main);">{{ cart.subtotal | currency }}</span>
         </div>
+
+        {% if cart.flash_discount > 0 %}
+          <div class="summary-row" style="color: #dc2626;">
+            <span>⚡ Flash Sale Discount</span>
+            <span style="font-weight: 700;">- {{ cart.flash_discount | currency }}</span>
+          </div>
+        {% endif %}
+
+        {% if cart.coupon_discount > 0 %}
+          <div class="summary-row" style="color: #15803d;">
+            <span>🎟️ Coupon ({{ cart.applied_coupon.code }})</span>
+            <span style="font-weight: 700;">- {{ cart.coupon_discount | currency }}</span>
+          </div>
+        {% endif %}
 
         <div class="summary-row">
           <span>Estimated Shipping</span>
