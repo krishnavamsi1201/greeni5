@@ -214,13 +214,21 @@
 
 /* Status select inside table */
 .status-select {
-  padding: 0.35rem 0.65rem;
+  padding: 0.4rem 0.75rem;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1.5px solid #cbd5e1;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   background: #ffffff;
+  color: #0f172a;
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
 }
 
 @media (max-width: 992px) {
