@@ -165,9 +165,74 @@ document.addEventListener("DOMContentLoaded", () => {
       if (list.length === 0) {
         e.preventDefault();
         window.showToast("Your wishlist is currently empty! Click ❤️ on any plant to save it.", "warning", false);
+      } else if (window.location.pathname.includes("/catalog")) {
+        e.preventDefault();
+        window.location.hash = "wishlist";
+        applyWishlistFilter();
       }
-      // If items exist and we are on catalog, scroll to first saved or filter
     });
+  }
+
+  // Wishlist Filter on Catalog Page
+  function applyWishlistFilter() {
+    const list = getWishlist();
+    const productCards = document.querySelectorAll(".product-grid .product-card");
+    const countSpan = document.getElementById("wishlist-filter-count");
+    if (countSpan) countSpan.textContent = list.length;
+
+    const filterBtn = document.getElementById("filter-wishlist-btn");
+    const isWishlistActive = window.location.hash === "#wishlist" || (filterBtn && filterBtn.classList.contains("active"));
+
+    if (filterBtn) {
+      if (isWishlistActive) {
+        filterBtn.classList.add("active");
+        filterBtn.style.background = "#fee2e2";
+      } else {
+        filterBtn.classList.remove("active");
+        filterBtn.style.background = "";
+      }
+    }
+
+    if (isWishlistActive) {
+      let matched = 0;
+      productCards.forEach(card => {
+        const pid = card.id ? card.id.replace("plant-", "") : "";
+        if (list.includes(pid)) {
+          card.style.display = "";
+          matched++;
+        } else {
+          card.style.display = "none";
+        }
+      });
+      if (matched === 0 && list.length > 0) {
+        window.showToast("Saved plants may be on other category pages or out of stock.", "info", false);
+      }
+    }
+  }
+
+  const filterWishlistBtn = document.getElementById("filter-wishlist-btn");
+  if (filterWishlistBtn) {
+    filterWishlistBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const list = getWishlist();
+      if (list.length === 0) {
+        window.showToast("Your favorites list is empty! Click ❤️ on any plant to save it.", "warning", false);
+        return;
+      }
+      if (window.location.hash === "#wishlist") {
+        history.pushState("", document.title, window.location.pathname + window.location.search);
+        document.querySelectorAll(".product-grid .product-card").forEach(c => c.style.display = "");
+        filterWishlistBtn.classList.remove("active");
+        filterWishlistBtn.style.background = "";
+      } else {
+        window.location.hash = "wishlist";
+        applyWishlistFilter();
+      }
+    });
+  }
+
+  if (window.location.hash === "#wishlist") {
+    applyWishlistFilter();
   }
 
   updateWishlistBadge();
@@ -328,6 +393,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 6. Quantity Stepper Controls
   document.querySelectorAll(".qty-btn").forEach(btn => {
+    // If it's a submit button inside a form (e.g. cart page update_cart), allow standard form submission!
+    if (btn.type === "submit") return;
+
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       const parent = btn.parentElement;
@@ -346,6 +414,19 @@ document.addEventListener("DOMContentLoaded", () => {
       input.dispatchEvent(new Event("change"));
     });
   });
+
+  // Mobile User Dropdown Menu Toggle
+  const userMenuBtn = document.querySelector(".user-menu-btn");
+  const userMenuWrap = document.querySelector(".user-menu-wrap");
+  if (userMenuBtn && userMenuWrap) {
+    userMenuBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      userMenuWrap.classList.toggle("open");
+    });
+    document.addEventListener("click", () => {
+      userMenuWrap.classList.remove("open");
+    });
+  }
 
   // 7. Saved Address autofill on checkout page
   const addressSelect = document.getElementById("saved-address-selector");

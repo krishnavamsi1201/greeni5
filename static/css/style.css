@@ -1397,3 +1397,35 @@ img {
   .stepper-line { display: none; }
   .footer-grid { grid-template-columns: 1fr; }
 }
+
+/* Floating WhatsApp Support Button */
+.floating-whatsapp-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 54px;
+  height: 54px;
+  background: #25d366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.45);
+  z-index: 99999;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.floating-whatsapp-btn:hover {
+  transform: scale(1.1) translateY(-3px);
+  box-shadow: 0 12px 28px rgba(37, 211, 102, 0.6);
+  background: #20ba59;
+}
+
+/* Mobile user dropdown toggle */
+.user-menu-wrap.open .dropdown-menu {
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
+}

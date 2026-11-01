@@ -39,6 +39,12 @@
                 <span>All Plants</span>
               </a>
             </li>
+            <li>
+              <a href="javascript:void(0)" id="filter-wishlist-btn" style="color: #e11d48; font-weight: 700; display: flex; justify-content: space-between; align-items: center;">
+                <span>❤️ Saved Favorites</span>
+                <span id="wishlist-filter-count" style="background: #fee2e2; color: #e11d48; font-size: 0.75rem; padding: 2px 7px; border-radius: 10px;">0</span>
+              </a>
+            </li>
             {% for cat in categories %}
               <li>
                 <a href="{{ url_for('catalog', category=cat.slug, sort=current_sort, search=search_query) }}" class="{{ 'active' if current_category == cat.slug else '' }}">
