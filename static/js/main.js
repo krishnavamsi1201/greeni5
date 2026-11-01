@@ -92,19 +92,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const mobileToggle = document.querySelector(".mobile-menu-toggle");
   const navLinks = document.querySelector(".nav-links");
   if (mobileToggle && navLinks) {
-    mobileToggle.addEventListener("click", () => {
-      const isVisible = navLinks.style.display === "flex";
-      navLinks.style.display = isVisible ? "none" : "flex";
-      if (!isVisible) {
-        navLinks.style.flexDirection = "column";
-        navLinks.style.position = "absolute";
-        navLinks.style.top = "74px";
-        navLinks.style.left = "0";
-        navLinks.style.width = "100%";
-        navLinks.style.background = "#ffffff";
-        navLinks.style.padding = "1.5rem";
-        navLinks.style.borderBottom = "1px solid #d2edd9";
-        navLinks.style.boxShadow = "0 10px 20px rgba(22, 163, 74, 0.1)";
+    mobileToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      navLinks.classList.toggle("open");
+    });
+    document.addEventListener("click", (e) => {
+      if (!navLinks.contains(e.target) && !mobileToggle.contains(e.target)) {
+        navLinks.classList.remove("open");
       }
     });
   }
@@ -567,9 +561,9 @@ document.addEventListener("DOMContentLoaded", () => {
         pill.classList.add("active");
         const extra = parseFloat(pill.dataset.extraPrice || "0");
         const newTotal = originalPrice + extra;
-        basePriceEl.textContent = "₹" + Math.round(newTotal);
+        basePriceEl.textContent = "₹" + Math.round(newTotal).toLocaleString('en-IN');
         if (selectedVariantInput) {
-          selectedVariantInput.value = pill.dataset.variantId;
+          selectedVariantInput.value = pill.dataset.variantId || "";
         }
       });
     });

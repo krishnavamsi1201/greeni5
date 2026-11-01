@@ -322,35 +322,4 @@
   {% endif %}
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const pills = document.querySelectorAll('.pot-variant-pill');
-  const variantInput = document.getElementById('selected-variant-id');
-  const priceDisplay = document.getElementById('details-display-price');
-
-  if (pills.length && variantInput && priceDisplay) {
-    const basePrice = parseFloat(priceDisplay.dataset.basePrice) || 0;
-
-    pills.forEach(pill => {
-      pill.addEventListener('click', () => {
-        pills.forEach(p => {
-          p.classList.remove('active');
-          p.style.background = '#ffffff';
-          p.style.borderColor = '#86efac';
-          p.style.fontWeight = '600';
-        });
-        pill.classList.add('active');
-        pill.style.background = '#dcfce7';
-        pill.style.borderColor = '#15803d';
-        pill.style.fontWeight = '700';
-
-        variantInput.value = pill.dataset.variantId || '';
-        const extra = parseFloat(pill.dataset.extraPrice) || 0;
-        const total = basePrice + extra;
-        priceDisplay.textContent = '₹' + Math.round(total).toLocaleString('en-IN');
-      });
-    });
-  }
-});
-</script>
 {% endblock %}
