@@ -74,7 +74,8 @@ def inject_global_data():
         cart_count=cart_count,
         current_user=current_user,
         active_flash_sale=active_flash_sale,
-        now_year=datetime.datetime.now().year
+        now_year=datetime.datetime.now().year,
+        asset_version=int(datetime.datetime.now().timestamp())
     )
 
 def login_required(f):
@@ -484,11 +485,11 @@ def generate_whatsapp_care_url(schedule, customer_name="Plant Parent"):
 
 @app.route('/plant-quiz')
 def plant_quiz():
-    location = request.args.get('location', 'indoor')
-    sunlight = request.args.get('sunlight', 'indirect')
-    experience = request.args.get('experience', 'beginner')
+    location = request.args.get('location', 'indoor').strip()
+    sunlight = request.args.get('sunlight', 'indirect').strip()
+    experience = request.args.get('experience', 'beginner').strip()
 
-    sql = '''
+    base_sql = '''
         SELECT p.*, c.name as category_name, c.slug as category_slug,
                COALESCE((SELECT image_url FROM plant_images WHERE plant_id = p.id AND is_primary = 1 LIMIT 1),
                         (SELECT image_url FROM plant_images WHERE plant_id = p.id LIMIT 1),
@@ -498,11 +499,40 @@ def plant_quiz():
         FROM plants p
         JOIN categories c ON p.category_id = c.id
         WHERE p.stock > 0
-        ORDER BY p.is_bestseller DESC, p.is_featured DESC, p.id ASC
     '''
-    plants = query_db(sql)
-    if not plants:
-        fallback_sql = sql.replace('WHERE p.stock > 0', 'WHERE 1=1')
+    conditions = []
+
+    if sunlight == 'low':
+        conditions.append("(p.sunlight LIKE '%Low%' OR p.sunlight LIKE '%Shade%' OR p.sunlight LIKE '%Filtered%')")
+    elif sunlight == 'direct':
+        conditions.append("(p.sunlight LIKE '%Direct%' OR p.sunlight LIKE '%Full%' OR p.sunlight LIKE '%Intense%')")
+    elif sunlight == 'indirect':
+        conditions.append("(p.sunlight LIKE '%Indirect%' OR p.sunlight LIKE '%Bright%')")
+
+    if experience == 'beginner':
+        conditions.append("(p.difficulty = 'Very Easy' OR p.difficulty = 'Easy')")
+    elif experience == 'balanced':
+        conditions.append("(p.difficulty IN ('Easy', 'Moderate'))")
+
+    if location == 'bedroom':
+        conditions.append("(c.slug = 'indoor-plants' OR c.slug = 'medicinal-plants' OR p.name LIKE '%Snake%' OR p.name LIKE '%Spider%' OR p.name LIKE '%ZZ%')")
+    elif location == 'office':
+        conditions.append("(c.slug = 'indoor-plants' OR p.difficulty = 'Very Easy')")
+    elif location == 'outdoor':
+        conditions.append("(c.slug IN ('outdoor-plants', 'flower-plants', 'fruit-plants') OR p.sunlight LIKE '%Direct%' OR p.sunlight LIKE '%Full%')")
+    elif location == 'balcony':
+        conditions.append("(c.slug IN ('outdoor-plants', 'flower-plants') OR p.sunlight LIKE '%Bright%' OR p.sunlight LIKE '%Direct%')")
+    elif location == 'indoor':
+        conditions.append("(c.slug = 'indoor-plants' OR p.sunlight LIKE '%Indirect%' OR p.sunlight LIKE '%Low%')")
+
+    final_sql = base_sql
+    if conditions:
+        final_sql += ' AND ' + ' AND '.join(conditions)
+    final_sql += ' ORDER BY p.is_bestseller DESC, p.is_featured DESC, p.id ASC LIMIT 12'
+
+    plants = query_db(final_sql)
+    if not plants or len(plants) < 2:
+        fallback_sql = base_sql + ' ORDER BY p.is_bestseller DESC, p.is_featured DESC, p.id ASC LIMIT 12'
         plants = query_db(fallback_sql)
 
     return render_template(

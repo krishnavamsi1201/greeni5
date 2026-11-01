@@ -1,163 +1,167 @@
 {% extends "base.html" %}
 
-{% block title %}Find My Perfect Plant Quiz - Greeni5 Nursery{% endblock %}
+{% block title %}Find Your Ideal Plant Quiz - Greeni5 Nursery{% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top: 3rem; padding-bottom: 5rem; max-width: 1080px;">
+<div class="container" style="padding-top: 2.5rem; padding-bottom: 5rem; max-width: 900px;">
 
-  <!-- Hero Banner -->
-  <div style="text-align: center; margin-bottom: 3rem;">
-    <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(22, 163, 74, 0.12); color: #15803d; padding: 6px 16px; border-radius: 30px; font-size: 0.875rem; font-weight: 700; margin-bottom: 1rem; border: 1px solid rgba(22, 163, 74, 0.2);">
-      <span>✨ 30-Second Botanical Matchmaker</span>
-    </div>
-    <h1 style="font-size: 2.6rem; font-weight: 800; color: #0b2e17; margin-bottom: 0.75rem; letter-spacing: -0.5px;">
-      Find Your <span style="background: linear-gradient(135deg, #15803d, #16a34a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Perfect Living Plant</span>
+  <!-- Hero Header -->
+  <div style="text-align: center; margin-bottom: 2.5rem;">
+    <span class="badge" style="background: #dcfce7; color: #15803d; font-weight: 700; padding: 6px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; margin-bottom: 0.75rem;">
+      🌿 60-Second Smart Plant Matcher
+    </span>
+    <h1 style="font-size: 2.4rem; font-weight: 800; color: #0b2e17; margin-bottom: 0.75rem;">
+      Discover Plants That Thrive In Your Space
     </h1>
-    <p style="color: #475569; font-size: 1.1rem; max-width: 650px; margin: 0 auto;">
-      Answer 3 quick questions about your room, lighting, and watering habits. We'll instantly match the best acclimatized plants that will thrive in your space!
+    <p style="color: #475569; font-size: 1.05rem; max-width: 650px; margin: 0 auto;">
+      Answer 3 quick questions about your room, lighting, and watering habits. We'll instantly match the best acclimatized plants that will flourish in your home or office!
     </p>
   </div>
 
-  <!-- Quiz Card Container -->
-  <div style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 20px; padding: 2.5rem; box-shadow: 0 15px 35px rgba(22, 101, 52, 0.08); margin-bottom: 3rem;">
-    
-    <!-- Step 1: Placement Location -->
-    <div class="quiz-step" id="step-1" style="margin-bottom: 2.5rem;">
-      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem;">
-        <span style="background: #15803d; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem;">1</span>
-        <h2 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0;">Where will you place your new plant?</h2>
+  <!-- Quiz Form Container -->
+  <form id="plant-quiz-form" method="GET" action="{{ url_for('plant_quiz') }}#quiz-results-container">
+    <div style="background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(14px); border: 1.5px solid var(--glass-border-green); border-radius: 20px; padding: 2.5rem; box-shadow: 0 15px 35px rgba(22, 101, 52, 0.08); margin-bottom: 3rem;">
+      
+      <!-- Step 1: Placement Location -->
+      <div class="quiz-step" id="step-1" style="margin-bottom: 2.5rem;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem;">
+          <span style="background: #15803d; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem;">1</span>
+          <h2 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin: 0;">Where will you place your new plant?</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem;">
+          <label class="quiz-option {{ 'active' if location == 'indoor' or not location else '' }}" data-step="1">
+            <input type="radio" name="location" value="indoor" {{ 'checked' if location == 'indoor' or not location else '' }} style="display: none;">
+            <div class="quiz-option-card">
+              <span class="quiz-emoji">🛋️</span>
+              <span class="quiz-opt-title">Living Room</span>
+              <span class="quiz-opt-desc">Indoor ambient space</span>
+            </div>
+          </label>
+          <label class="quiz-option {{ 'active' if location == 'bedroom' else '' }}" data-step="1">
+            <input type="radio" name="location" value="bedroom" {{ 'checked' if location == 'bedroom' else '' }} style="display: none;">
+            <div class="quiz-option-card">
+              <span class="quiz-emoji">🛏️</span>
+              <span class="quiz-opt-title">Bedroom</span>
+              <span class="quiz-opt-desc">Oxygen & air purifying</span>
+            </div>
+          </label>
+          <label class="quiz-option {{ 'active' if location == 'office' else '' }}" data-step="1">
+            <input type="radio" name="location" value="office" {{ 'checked' if location == 'office' else '' }} style="display: none;">
+            <div class="quiz-option-card">
+              <span class="quiz-emoji">💼</span>
+              <span class="quiz-opt-title">AC Office / Desk</span>
+              <span class="quiz-opt-desc">Compact & hardy</span>
+            </div>
+          </label>
+          <label class="quiz-option {{ 'active' if location == 'balcony' else '' }}" data-step="1">
+            <input type="radio" name="location" value="balcony" {{ 'checked' if location == 'balcony' else '' }} style="display: none;">
+            <div class="quiz-option-card">
+              <span class="quiz-emoji">🪴</span>
+              <span class="quiz-opt-title">Balcony / Veranda</span>
+              <span class="quiz-opt-desc">Open-air with breeze</span>
+            </div>
+          </label>
+          <label class="quiz-option {{ 'active' if location == 'outdoor' else '' }}" data-step="1">
+            <input type="radio" name="location" value="outdoor" {{ 'checked' if location == 'outdoor' else '' }} style="display: none;">
+            <div class="quiz-option-card">
+              <span class="quiz-emoji">☀️</span>
+              <span class="quiz-opt-title">Terrace Garden</span>
+              <span class="quiz-opt-desc">Direct open sun</span>
+            </div>
+          </label>
+        </div>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-        <label class="quiz-option" data-step="1" data-val="indoor">
-          <input type="radio" name="location" value="indoor" checked style="display: none;">
-          <div class="quiz-option-card">
-            <span class="quiz-emoji">🛋️</span>
-            <span class="quiz-opt-title">Living Room</span>
-            <span class="quiz-opt-desc">Indoor ambient space</span>
-          </div>
-        </label>
-        <label class="quiz-option" data-step="1" data-val="bedroom">
-          <input type="radio" name="location" value="bedroom" style="display: none;">
-          <div class="quiz-option-card">
-            <span class="quiz-emoji">🛏️</span>
-            <span class="quiz-opt-title">Bedroom</span>
-            <span class="quiz-opt-desc">Oxygen & air purifying</span>
-          </div>
-        </label>
-        <label class="quiz-option" data-step="1" data-val="office">
-          <input type="radio" name="location" value="office" style="display: none;">
-          <div class="quiz-option-card">
-            <span class="quiz-emoji">💼</span>
-            <span class="quiz-opt-title">AC Office / Desk</span>
-            <span class="quiz-opt-desc">Compact & hardy</span>
-          </div>
-        </label>
-        <label class="quiz-option" data-step="1" data-val="balcony">
-          <input type="radio" name="location" value="balcony" style="display: none;">
-          <div class="quiz-option-card">
-            <span class="quiz-emoji">🪴</span>
-            <span class="quiz-opt-title">Balcony / Veranda</span>
-            <span class="quiz-opt-desc">Open-air with breeze</span>
-          </div>
-        </label>
-        <label class="quiz-option" data-step="1" data-val="outdoor">
-          <input type="radio" name="location" value="outdoor" style="display: none;">
-          <div class="quiz-option-card">
-            <span class="quiz-emoji">☀️</span>
-            <span class="quiz-opt-title">Terrace Garden</span>
-            <span class="quiz-opt-desc">Direct open sun</span>
-          </div>
-        </label>
-      </div>
-    </div>
 
-    <!-- Step 2: Sunlight Level -->
-    <div class="quiz-step" id="step-2" style="margin-bottom: 2.5rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
-      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem;">
-        <span style="background: #15803d; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem;">2</span>
-        <h2 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0;">How much sunlight does that spot get?</h2>
+      <!-- Step 2: Sunlight Level -->
+      <div class="quiz-step" id="step-2" style="margin-bottom: 2.5rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem;">
+          <span style="background: #15803d; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem;">2</span>
+          <h2 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin: 0;">How much sunlight does that spot get?</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <label class="quiz-option {{ 'active' if sunlight == 'low' else '' }}" data-step="2">
+            <input type="radio" name="sunlight" value="low" {{ 'checked' if sunlight == 'low' else '' }} style="display: none;">
+            <div class="quiz-option-card">
+              <span class="quiz-emoji">🌥️</span>
+              <span class="quiz-opt-title">Low Light / Shade</span>
+              <span class="quiz-opt-desc">Filtered or indoor bulbs</span>
+            </div>
+          </label>
+          <label class="quiz-option {{ 'active' if sunlight == 'indirect' or not sunlight else '' }}" data-step="2">
+            <input type="radio" name="sunlight" value="indirect" {{ 'checked' if sunlight == 'indirect' or not sunlight else '' }} style="display: none;">
+            <div class="quiz-option-card">
+              <span class="quiz-emoji">⛅</span>
+              <span class="quiz-opt-title">Indirect Bright Light</span>
+              <span class="quiz-opt-desc">Near window with curtain</span>
+            </div>
+          </label>
+          <label class="quiz-option {{ 'active' if sunlight == 'direct' else '' }}" data-step="2">
+            <input type="radio" name="sunlight" value="direct" {{ 'checked' if sunlight == 'direct' else '' }} style="display: none;">
+            <div class="quiz-option-card">
+              <span class="quiz-emoji">☀️</span>
+              <span class="quiz-opt-title">Direct Sunlight</span>
+              <span class="quiz-opt-desc">4+ hours of full sun</span>
+            </div>
+          </label>
+        </div>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
-        <label class="quiz-option" data-step="2" data-val="low">
-          <input type="radio" name="sunlight" value="low" style="display: none;">
-          <div class="quiz-option-card">
-            <span class="quiz-emoji">🌥️</span>
-            <span class="quiz-opt-title">Low Light / Shade</span>
-            <span class="quiz-opt-desc">Filtered or indoor bulbs</span>
-          </div>
-        </label>
-        <label class="quiz-option" data-step="2" data-val="indirect" checked>
-          <input type="radio" name="sunlight" value="indirect" checked style="display: none;">
-          <div class="quiz-option-card">
-            <span class="quiz-emoji">⛅</span>
-            <span class="quiz-opt-title">Indirect Bright Light</span>
-            <span class="quiz-opt-desc">Near window with curtain</span>
-          </div>
-        </label>
-        <label class="quiz-option" data-step="2" data-val="direct">
-          <input type="radio" name="sunlight" value="direct" style="display: none;">
-          <div class="quiz-option-card">
-            <span class="quiz-emoji">☀️</span>
-            <span class="quiz-opt-title">Direct Sunlight</span>
-            <span class="quiz-opt-desc">4+ hours of full sun</span>
-          </div>
-        </label>
-      </div>
-    </div>
 
-    <!-- Step 3: Care Style / Experience -->
-    <div class="quiz-step" id="step-3" style="margin-bottom: 2rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
-      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem;">
-        <span style="background: #15803d; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem;">3</span>
-        <h2 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0;">What is your plant care habit?</h2>
+      <!-- Step 3: Care Style / Experience -->
+      <div class="quiz-step" id="step-3" style="margin-bottom: 2rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem;">
+          <span style="background: #15803d; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem;">3</span>
+          <h2 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin: 0;">What is your plant care habit?</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <label class="quiz-option {{ 'active' if experience == 'beginner' or not experience else '' }}" data-step="3">
+            <input type="radio" name="experience" value="beginner" {{ 'checked' if experience == 'beginner' or not experience else '' }} style="display: none;">
+            <div class="quiz-option-card">
+              <span class="quiz-emoji">🐣</span>
+              <span class="quiz-opt-title">Busy / Forgetful</span>
+              <span class="quiz-opt-desc">"I often forget to water!"</span>
+            </div>
+          </label>
+          <label class="quiz-option {{ 'active' if experience == 'balanced' else '' }}" data-step="3">
+            <input type="radio" name="experience" value="balanced" {{ 'checked' if experience == 'balanced' else '' }} style="display: none;">
+            <div class="quiz-option-card">
+              <span class="quiz-emoji">🪴</span>
+              <span class="quiz-opt-title">Weekly Routine</span>
+              <span class="quiz-opt-desc">Can water 1-2 times weekly</span>
+            </div>
+          </label>
+          <label class="quiz-option {{ 'active' if experience == 'pro' else '' }}" data-step="3">
+            <input type="radio" name="experience" value="pro" {{ 'checked' if experience == 'pro' else '' }} style="display: none;">
+            <div class="quiz-option-card">
+              <span class="quiz-emoji">👨‍🌾</span>
+              <span class="quiz-opt-title">Plant Enthusiast</span>
+              <span class="quiz-opt-desc">Loves regular misting & care</span>
+            </div>
+          </label>
+        </div>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
-        <label class="quiz-option" data-step="3" data-val="beginner" checked>
-          <input type="radio" name="experience" value="beginner" checked style="display: none;">
-          <div class="quiz-option-card">
-            <span class="quiz-emoji">🐣</span>
-            <span class="quiz-opt-title">Busy / Forgetful</span>
-            <span class="quiz-opt-desc">"I often forget to water!"</span>
-          </div>
-        </label>
-        <label class="quiz-option" data-step="3" data-val="balanced">
-          <input type="radio" name="experience" value="balanced" style="display: none;">
-          <div class="quiz-option-card">
-            <span class="quiz-emoji">🪴</span>
-            <span class="quiz-opt-title">Weekly Routine</span>
-            <span class="quiz-opt-desc">Can water 1-2 times weekly</span>
-          </div>
-        </label>
-        <label class="quiz-option" data-step="3" data-val="pro">
-          <input type="radio" name="experience" value="pro" style="display: none;">
-          <div class="quiz-option-card">
-            <span class="quiz-emoji">👨‍🌾</span>
-            <span class="quiz-opt-title">Plant Enthusiast</span>
-            <span class="quiz-opt-desc">Loves regular misting & care</span>
-          </div>
-        </label>
+
+      <!-- Action Submit Button -->
+      <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+        <button type="submit" id="btn-show-matches" class="btn btn-primary btn-lg" style="padding: 14px 40px; font-size: 1.1rem; border-radius: 30px; box-shadow: 0 8px 24px rgba(21, 128, 61, 0.3);">
+          🪴 Reveal My Best Matching Plants &rarr;
+        </button>
       </div>
-    </div>
 
-    <!-- Action Button -->
-    <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
-      <button type="button" id="btn-show-matches" class="btn btn-primary btn-lg" style="padding: 14px 36px; font-size: 1.1rem; border-radius: 30px; box-shadow: 0 8px 20px rgba(21, 128, 61, 0.25);">
-        🪴 Reveal My Best Matching Plants &rarr;
-      </button>
     </div>
-
-  </div>
+  </form>
 
   <!-- Results Section -->
-  <div id="quiz-results-container" style="scroll-margin-top: 80px;">
-    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div id="quiz-results-container" style="scroll-margin-top: 90px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;">
       <div>
-        <h2 style="font-size: 1.8rem; font-weight: 800; color: #0b2e17;">Top Recommended Plants For You</h2>
-        <p id="quiz-summary-text" style="color: #64748b; font-size: 0.95rem;">Matched based on your room lighting and watering schedule.</p>
+        <h2 style="font-size: 1.85rem; font-weight: 800; color: #0b2e17;">Top Recommended Plants For You</h2>
+        <p id="quiz-summary-text" style="color: #64748b; font-size: 0.95rem;">
+          Tailored for <strong style="color: #15803d;">{{ location | capitalize }}</strong> &bull; <strong style="color: #15803d;">{{ sunlight | capitalize }} Light</strong> &bull; <strong style="color: #15803d;">{{ experience | capitalize }} Care</strong>
+        </p>
       </div>
-      <button type="button" id="btn-reset-quiz" class="btn btn-outline btn-sm" style="border-radius: 20px;">
-        🔄 Retake Quiz
-      </button>
+      <a href="{{ url_for('plant_quiz') }}" class="btn btn-outline btn-sm" style="border-radius: 20px; font-weight: 700;">
+        🔄 Reset Filters
+      </a>
     </div>
 
     <div id="quiz-results-grid" class="product-grid">
@@ -231,9 +235,9 @@
 }
 .quiz-option input[type="radio"]:checked + .quiz-option-card,
 .quiz-option.active .quiz-option-card {
-  border-color: #15803d;
-  background: #f0fdf4;
-  box-shadow: 0 6px 18px rgba(21, 128, 61, 0.14);
+  border-color: #15803d !important;
+  background: #f0fdf4 !important;
+  box-shadow: 0 6px 18px rgba(21, 128, 61, 0.14) !important;
   transform: translateY(-2px);
 }
 .quiz-emoji {
@@ -261,27 +265,21 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(`.quiz-option[data-step="${step}"]`).forEach(el => el.classList.remove("active"));
       opt.classList.add("active");
       const radio = opt.querySelector('input[type="radio"]');
-      if (radio) radio.checked = true;
+      if (radio) {
+        radio.checked = true;
+      }
     });
   });
 
-  // Set initial active state
-  document.querySelectorAll('.quiz-option input[type="radio"]:checked').forEach(r => {
-    const parent = r.closest('.quiz-option');
-    if (parent) parent.classList.add('active');
-  });
-
-  document.getElementById("btn-show-matches").addEventListener("click", () => {
-    const results = document.getElementById("quiz-results-container");
-    results.scrollIntoView({ behavior: 'smooth' });
-    if (window.showToast) {
-      window.showToast("Matched your personalized plant recommendations!", "success");
+  // If user navigated via submission or hash, scroll smoothly
+  if (window.location.search && window.location.hash === "#quiz-results-container") {
+    const el = document.getElementById("quiz-results-container");
+    if (el) {
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: "smooth" });
+      }, 150);
     }
-  });
-
-  document.getElementById("btn-reset-quiz").addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+  }
 });
 </script>
 {% endblock %}

@@ -240,10 +240,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const plantId = button.dataset.plantId;
       if (!plantId) return;
 
-      const qtyInput = document.getElementById("detail-quantity");
-      const quantity = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
-      const variantInput = document.getElementById("selected-variant-id");
-      const variantId = variantInput ? variantInput.value : "";
+      let quantity = 1;
+      let variantId = "";
+      const form = button.closest("form");
+      if (form) {
+        const qtyEl = form.querySelector("#detail-quantity") || form.querySelector("input[name='quantity']");
+        if (qtyEl) quantity = parseInt(qtyEl.value) || 1;
+        const varEl = form.querySelector("#selected-variant-id") || form.querySelector("input[name='variant_id']");
+        if (varEl) variantId = varEl.value || "";
+      }
       const originalBtnContent = button.innerHTML;
 
       try {
@@ -326,10 +331,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const plantId = button.dataset.plantId;
       if (!plantId) return;
 
-      const qtyInput = document.getElementById("detail-quantity");
-      const quantity = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
-      const variantInput = document.getElementById("selected-variant-id");
-      const variantId = variantInput ? variantInput.value : "";
+      let quantity = 1;
+      let variantId = "";
+      const form = button.closest("form");
+      if (form) {
+        const qtyEl = form.querySelector("#detail-quantity") || form.querySelector("input[name='quantity']");
+        if (qtyEl) quantity = parseInt(qtyEl.value) || 1;
+        const varEl = form.querySelector("#selected-variant-id") || form.querySelector("input[name='variant_id']");
+        if (varEl) variantId = varEl.value || "";
+      }
 
       button.disabled = true;
       button.innerHTML = "<span>Proceeding to Checkout...</span>";
@@ -567,5 +577,44 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     });
+  }
+
+  // 11. Mobile Catalog Filter Toggle
+  const filterToggleBtn = document.getElementById("mobile-filter-toggle-btn");
+  const filterSidebar = document.getElementById("filter-sidebar");
+  if (filterToggleBtn && filterSidebar) {
+    filterToggleBtn.addEventListener("click", () => {
+      filterSidebar.classList.toggle("open");
+      filterToggleBtn.textContent = filterSidebar.classList.contains("open") ? "Hide ▴" : "Filter ▾";
+    });
+  }
+
+  // 12. Checkout Payment Option Selection Glow
+  const paymentCards = document.querySelectorAll(".payment-option-card");
+  if (paymentCards.length > 0) {
+    const updatePaymentHighlight = () => {
+      paymentCards.forEach(card => {
+        const radio = card.querySelector("input[type='radio']");
+        if (radio && radio.checked) {
+          card.classList.add("selected");
+        } else {
+          card.classList.remove("selected");
+        }
+      });
+    };
+    paymentCards.forEach(card => {
+      card.addEventListener("click", () => {
+        const radio = card.querySelector("input[type='radio']");
+        if (radio) {
+          radio.checked = true;
+          updatePaymentHighlight();
+        }
+      });
+      const radio = card.querySelector("input[type='radio']");
+      if (radio) {
+        radio.addEventListener("change", updatePaymentHighlight);
+      }
+    });
+    updatePaymentHighlight();
   }
 });

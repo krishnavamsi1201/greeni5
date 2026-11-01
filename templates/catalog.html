@@ -16,10 +16,15 @@
 
   <div class="catalog-layout">
     <!-- Filter Sidebar -->
-    <aside class="filter-sidebar">
+    <aside class="filter-sidebar" id="filter-sidebar">
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">Filters</h3>
-        <a href="{{ url_for('catalog') }}" style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">Reset All</a>
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin: 0;">Filters</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <a href="{{ url_for('catalog') }}" style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">Reset</a>
+          <button type="button" class="btn btn-secondary btn-sm" id="mobile-filter-toggle-btn" style="display: none; padding: 4px 10px; font-size: 0.75rem;">
+            Filter ▾
+          </button>
+        </div>
       </div>
 
       <form action="{{ url_for('catalog') }}" method="GET" id="catalog-filter-form">

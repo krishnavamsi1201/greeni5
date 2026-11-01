@@ -8,7 +8,7 @@
   <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 2rem;">Secure Checkout</h1>
 
   <form action="{{ url_for('checkout') }}" method="POST">
-    <div style="display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 2.5rem; align-items: start;">
+    <div class="checkout-layout-grid">
       
       <!-- Left Column: Shipping & Payment -->
       <div>
@@ -42,7 +42,7 @@
             <i data-lucide="map-pin" style="width: 20px; color: var(--primary);"></i> 1. Shipping & Contact Information
           </h3>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+          <div class="form-row-2">
             <div>
               <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Full Name *</label>
               <input type="text" id="cust-name" name="customer_name" required value="{{ current_user.name if current_user else '' }}" placeholder="e.g. John Doe" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;">
@@ -63,7 +63,7 @@
             <textarea id="cust-addr" name="shipping_address" rows="3" required placeholder="Flat/House no., Apartment name, Street, Landmark" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit;"></textarea>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+          <div class="form-row-3">
             <div>
               <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">City *</label>
               <input type="text" id="cust-city" name="city" required placeholder="Bengaluru" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;">

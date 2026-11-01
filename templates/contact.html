@@ -15,7 +15,7 @@
     </p>
   </div>
 
-  <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 3rem; align-items: start;">
+  <div class="contact-layout-grid">
     
     <!-- Left Column: Nursery Information -->
     <div style="background: var(--bg-surface-alt); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem;">
@@ -59,7 +59,7 @@
       <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem;">Send a Message</h3>
       
       <form action="{{ url_for('contact') }}" method="POST">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div class="form-row-2">
           <div>
             <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Your Name *</label>
             <input type="text" name="name" required placeholder="John Doe" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem;">
