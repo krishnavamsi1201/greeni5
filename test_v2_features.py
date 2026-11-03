@@ -1,27 +1,45 @@
-import requests
+import os, sys
+sys.path.insert(0, os.getcwd())
+import app
 import json
 import unittest
+import sqlite3
 
 BASE_URL = "http://127.0.0.1:5000"
-
-import sqlite3
 
 def get_db():
     conn = sqlite3.connect('greeni5.db')
     conn.row_factory = sqlite3.Row
     return conn
 
+class FlaskClientAdapter:
+    def __init__(self):
+        self.client = app.app.test_client()
+
+    def get(self, url, **kwargs):
+        path = url.replace("http://127.0.0.1:5000", "")
+        res = self.client.get(path, follow_redirects=kwargs.get('allow_redirects', True))
+        res.text = res.data.decode('utf-8', errors='ignore')
+        return res
+
+    def post(self, url, **kwargs):
+        path = url.replace("http://127.0.0.1:5000", "")
+        data = kwargs.get('data', {})
+        res = self.client.post(path, data=data, follow_redirects=kwargs.get('allow_redirects', True))
+        res.text = res.data.decode('utf-8', errors='ignore')
+        return res
+
 class TestGreeni5V2Features(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.s_admin = requests.Session()
+        cls.s_admin = FlaskClientAdapter()
         login_resp = cls.s_admin.post(f"{BASE_URL}/login", data={
             'email': 'admin@greeni5.com',
             'password': 'Admin@123'
         }, allow_redirects=True)
         assert login_resp.status_code == 200, "Admin login failed"
 
-        cls.s_user = requests.Session()
+        cls.s_user = FlaskClientAdapter()
 
     def test_01_admin_addons_management(self):
         """Test Feature 2: Admin Add-ons Combos CRUD"""
