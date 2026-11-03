@@ -485,63 +485,7 @@ def generate_whatsapp_care_url(schedule, customer_name="Plant Parent"):
 
 @app.route('/plant-quiz')
 def plant_quiz():
-    location = request.args.get('location', 'indoor').strip()
-    sunlight = request.args.get('sunlight', 'indirect').strip()
-    experience = request.args.get('experience', 'beginner').strip()
-
-    base_sql = '''
-        SELECT p.*, c.name as category_name, c.slug as category_slug,
-               COALESCE((SELECT image_url FROM plant_images WHERE plant_id = p.id AND is_primary = 1 LIMIT 1),
-                        (SELECT image_url FROM plant_images WHERE plant_id = p.id LIMIT 1),
-                        'https://images.unsplash.com/photo-1545241047-6083a3684587?w=600') as image_url,
-               (SELECT ROUND(AVG(rating), 1) FROM reviews WHERE plant_id = p.id AND is_approved = 1) as avg_rating,
-               (SELECT COUNT(*) FROM reviews WHERE plant_id = p.id AND is_approved = 1) as review_count
-        FROM plants p
-        JOIN categories c ON p.category_id = c.id
-        WHERE p.stock > 0
-    '''
-    conditions = []
-
-    if sunlight == 'low':
-        conditions.append("(p.sunlight LIKE '%Low%' OR p.sunlight LIKE '%Shade%' OR p.sunlight LIKE '%Filtered%')")
-    elif sunlight == 'direct':
-        conditions.append("(p.sunlight LIKE '%Direct%' OR p.sunlight LIKE '%Full%' OR p.sunlight LIKE '%Intense%')")
-    elif sunlight == 'indirect':
-        conditions.append("(p.sunlight LIKE '%Indirect%' OR p.sunlight LIKE '%Bright%')")
-
-    if experience == 'beginner':
-        conditions.append("(p.difficulty = 'Very Easy' OR p.difficulty = 'Easy')")
-    elif experience == 'balanced':
-        conditions.append("(p.difficulty IN ('Easy', 'Moderate'))")
-
-    if location == 'bedroom':
-        conditions.append("(c.slug = 'indoor-plants' OR c.slug = 'medicinal-plants' OR p.name LIKE '%Snake%' OR p.name LIKE '%Spider%' OR p.name LIKE '%ZZ%')")
-    elif location == 'office':
-        conditions.append("(c.slug = 'indoor-plants' OR p.difficulty = 'Very Easy')")
-    elif location == 'outdoor':
-        conditions.append("(c.slug IN ('outdoor-plants', 'flower-plants', 'fruit-plants') OR p.sunlight LIKE '%Direct%' OR p.sunlight LIKE '%Full%')")
-    elif location == 'balcony':
-        conditions.append("(c.slug IN ('outdoor-plants', 'flower-plants') OR p.sunlight LIKE '%Bright%' OR p.sunlight LIKE '%Direct%')")
-    elif location == 'indoor':
-        conditions.append("(c.slug = 'indoor-plants' OR p.sunlight LIKE '%Indirect%' OR p.sunlight LIKE '%Low%')")
-
-    final_sql = base_sql
-    if conditions:
-        final_sql += ' AND ' + ' AND '.join(conditions)
-    final_sql += ' ORDER BY p.is_bestseller DESC, p.is_featured DESC, p.id ASC LIMIT 12'
-
-    plants = query_db(final_sql)
-    if not plants or len(plants) < 2:
-        fallback_sql = base_sql + ' ORDER BY p.is_bestseller DESC, p.is_featured DESC, p.id ASC LIMIT 12'
-        plants = query_db(fallback_sql)
-
-    return render_template(
-        'quiz.html',
-        recommended_plants=plants,
-        location=location,
-        sunlight=sunlight,
-        experience=experience
-    )
+    return redirect(url_for('care_tips'))
 
 @app.route('/plant/<slug>')
 def plant_details(slug):
@@ -1140,8 +1084,27 @@ def delete_address(address_id):
 # ==========================================
 
 @app.route('/care-tips')
+@app.route('/care-guides')
 def care_tips():
-    return render_template('care_tips.html')
+    plants = query_db('''
+        SELECT p.*, c.name as category_name, c.slug as category_slug,
+               COALESCE((SELECT image_url FROM plant_images WHERE plant_id = p.id AND is_primary = 1 LIMIT 1),
+                        (SELECT image_url FROM plant_images WHERE plant_id = p.id LIMIT 1),
+                        'https://images.unsplash.com/photo-1545241047-6083a3684587?w=600') as image_url
+        FROM plants p
+        JOIN categories c ON p.category_id = c.id
+        WHERE p.stock > 0
+        ORDER BY c.id ASC, p.id ASC
+    ''')
+    from care_data import get_care_for_plant
+    plants_with_care = []
+    for p in plants:
+        p_dict = dict(p)
+        p_dict['care'] = get_care_for_plant(p['slug'], p['name'], p['category_slug'])
+        plants_with_care.append(p_dict)
+
+    categories = query_db('SELECT * FROM categories ORDER BY id ASC')
+    return render_template('care_tips.html', plants=plants_with_care, categories=categories)
 
 @app.route('/about')
 def about():

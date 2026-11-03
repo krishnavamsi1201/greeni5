@@ -41,12 +41,15 @@ class TestGreeni5V3Features(unittest.TestCase):
 
         cls.s_user = FlaskClientAdapter()
 
-    def test_01_plant_quiz(self):
-        """Test Feature 1: 'Find My Perfect Plant' Interactive Quiz"""
-        r = self.s_user.get(f"{BASE_URL}/plant-quiz?location=indoor&sunlight=indirect&experience=beginner")
+    def test_01_comprehensive_care_guide(self):
+        """Test Feature 1: Comprehensive Plant Care Master Guide with Adhi Chesty vs Cheyaka Poty"""
+        r = self.s_user.get(f"{BASE_URL}/care-tips")
         self.assertEqual(r.status_code, 200)
-        self.assertIn("Quiz", r.text)
-        self.assertIn("Top Recommended Plants For You", r.text)
+        self.assertIn("Each &amp; Every Plant Care Master Guide", r.text)
+        self.assertIn("ADHI CHESTY", r.text)
+        self.assertIn("CHEYAKA POTY", r.text)
+        self.assertIn("Golden Pothos", r.text)
+        self.assertIn("Monstera Deliciosa", r.text)
 
     def test_02_gift_order_checkout(self):
         """Test Feature 3: 'Gift a Plant' Checkout with Greeting & Wrap Fee"""
