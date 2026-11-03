@@ -223,8 +223,10 @@ def get_cart_details():
     active_flash_sale = None
     try:
         active_flash_sale = query_db('SELECT * FROM flash_sales WHERE is_active = 1 AND datetime(ends_at) > datetime("now") ORDER BY id DESC LIMIT 1', one=True)
-        if active_flash_sale and subtotal > 0:
-            flash_discount = round(subtotal * (float(active_flash_sale['discount_pct']) / 100.0), 2)
+        if active_flash_sale:
+            active_flash_sale = dict(active_flash_sale)
+            if subtotal > 0:
+                flash_discount = round(subtotal * (float(active_flash_sale['discount_pct']) / 100.0), 2)
     except Exception:
         pass
 
@@ -479,10 +481,22 @@ def generate_whatsapp_care_url(schedule, customer_name="Plant Parent"):
     return f"https://wa.me/?text={urllib.parse.quote(msg)}"
 
 @app.route('/plant-quiz')
+@app.route('/quiz')
 def plant_quiz():
     return redirect(url_for('care_tips'))
 
+@app.route('/care')
+@app.route('/plant-care')
+def care_redirect():
+    return redirect(url_for('care_tips'))
+
+@app.route('/plants')
+@app.route('/products')
+def products_redirect():
+    return redirect(url_for('catalog'))
+
 @app.route('/plant/<slug>')
+@app.route('/product/<slug>')
 def plant_details(slug):
     plant = query_db('''
         SELECT p.*, c.name as category_name, c.slug as category_slug
@@ -905,6 +919,8 @@ def order_tracking(order_number):
     )
 
 @app.route('/track', methods=['GET', 'POST'])
+@app.route('/track-order', methods=['GET', 'POST'])
+@app.route('/tracking', methods=['GET', 'POST'])
 def track_lookup():
     if request.method == 'POST':
         order_num = request.form.get('order_number', '').strip()
@@ -917,7 +933,9 @@ def track_lookup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if 'user_id' in session:
-        return redirect(url_for('dashboard'))
+        if session.get('user_role') == 'admin':
+            return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('index'))
 
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
@@ -950,7 +968,9 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if 'user_id' in session:
-        return redirect(url_for('dashboard'))
+        if session.get('user_role') == 'admin':
+            return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('index'))
 
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
@@ -1088,7 +1108,6 @@ def care_tips():
                         'https://images.unsplash.com/photo-1545241047-6083a3684587?w=600') as image_url
         FROM plants p
         JOIN categories c ON p.category_id = c.id
-        WHERE p.stock > 0
         ORDER BY c.id ASC, p.id ASC
     ''')
     from care_data import get_care_for_plant

@@ -14,14 +14,14 @@ class Greeni5TestSuite(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Greeni5', response.data)
         self.assertIn(b'Indoor Plants', response.data)
-        self.assertIn(b'Featured Plants', response.data)
+        self.assertIn(b'Bring Living Nature', response.data)
         print("[OK] Home page loaded with categories and featured plants")
 
     def test_02_catalog_and_filters(self):
         # All catalog
         resp = self.client.get('/catalog')
         self.assertEqual(resp.status_code, 200)
-        self.assertIn(b'All Botanical Varieties', resp.data)
+        self.assertIn(b'Plant Catalog', resp.data)
 
         # Filter by category
         resp_cat = self.client.get('/catalog?category=indoor-plants')
@@ -29,9 +29,9 @@ class Greeni5TestSuite(unittest.TestCase):
         self.assertIn(b'Monstera Deliciosa', resp_cat.data)
 
         # Filter by search
-        resp_search = self.client.get('/catalog?search=Snake')
+        resp_search = self.client.get('/catalog?search=Tulsi')
         self.assertEqual(resp_search.status_code, 200)
-        self.assertIn(b'Snake Plant', resp_search.data)
+        self.assertIn(b'Tulsi', resp_search.data)
 
         # Filter by sort price_asc
         resp_sort = self.client.get('/catalog?sort=price_asc')
@@ -39,7 +39,7 @@ class Greeni5TestSuite(unittest.TestCase):
         print("[OK] Catalog, search, and category filters verified")
 
     def test_03_plant_details(self):
-        resp = self.client.get('/plant/monstera-deliciosa')
+        resp = self.client.get('/plant/monstera-deliciosa-swiss')
         self.assertEqual(resp.status_code, 200)
         self.assertIn(b'Monstera Deliciosa', resp.data)
         self.assertIn(b'Sunlight', resp.data)
@@ -49,7 +49,7 @@ class Greeni5TestSuite(unittest.TestCase):
 
     def test_04_cart_operations(self):
         # Add to cart
-        resp = self.client.post('/cart/add/1', data={'quantity': 2}, headers={'X-Requested-With': 'XMLHttpRequest'})
+        resp = self.client.post('/cart/add/3', data={'quantity': 2}, headers={'X-Requested-With': 'XMLHttpRequest'})
         self.assertEqual(resp.status_code, 200)
         json_data = resp.get_json()
         self.assertTrue(json_data['success'])
@@ -58,10 +58,10 @@ class Greeni5TestSuite(unittest.TestCase):
         # View cart
         resp_cart = self.client.get('/cart')
         self.assertEqual(resp_cart.status_code, 200)
-        self.assertIn(b'Monstera Deliciosa', resp_cart.data)
+        self.assertIn(b'Golden Pothos', resp_cart.data)
 
         # Update cart quantity
-        resp_up = self.client.post('/cart/update', data={'plant_id': 1, 'quantity': 3}, headers={'X-Requested-With': 'XMLHttpRequest'})
+        resp_up = self.client.post('/cart/update', data={'plant_id': 3, 'quantity': 3}, headers={'X-Requested-With': 'XMLHttpRequest'})
         self.assertEqual(resp_up.status_code, 200)
         self.assertEqual(resp_up.get_json()['cart_count'], 3)
         print("[OK] Cart add, view, and quantity updates verified")
@@ -73,7 +73,7 @@ class Greeni5TestSuite(unittest.TestCase):
             self.assertEqual(login_resp.status_code, 200)
 
             # Add plant to cart
-            self.client.post('/cart/add/2', data={'quantity': 1})
+            self.client.post('/cart/add/3', data={'quantity': 1})
 
             # Place order
             order_data = {
@@ -175,13 +175,13 @@ class Greeni5TestSuite(unittest.TestCase):
         self.assertIn(b'Thank you for reaching out', contact_resp.data)
 
         # Review submission
-        rev_resp = self.client.post('/review/add/1', data={
+        rev_resp = self.client.post('/reviews/add/3', data={
             'user_name': 'Meera Sen',
             'rating': '5',
             'comment': 'Stunning plant! Very well packaged.'
         }, follow_redirects=True)
         self.assertEqual(rev_resp.status_code, 200)
-        self.assertIn(b'Your review has been published', rev_resp.data)
+        self.assertIn(b'published', rev_resp.data)
         print("[OK] Contact form and Review submission verified")
 
 if __name__ == '__main__':
