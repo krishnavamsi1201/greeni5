@@ -1,166 +1,278 @@
 {% extends "base.html" %}
 
-{% block title %}Greeni5 - Online Living Plant Nursery | All Plants{% endblock %}
+{% block title %}Greeni5 - Fresh Living Plants & Botanical Nursery{% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top: 1.5rem; padding-bottom: 5rem;">
+<!-- 1. Hero Section (Exact Design from Screenshot 1) -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="hero-pill">
+          <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+          <span>Direct From Certified Organic Greenhouses</span>
+        </div>
+        <h1 class="hero-title">
+          Bring Living Nature <br>
+          Into <span>Your Living Spaces.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Explore indoor air purifiers, flowering ornamentals, terrace fruit trees, and Ayurvedic herbs. Acclimatized with organic care and delivered safe to your doorstep.
+        </p>
 
-  <!-- Clean, Compact Hero Section (Zero Sodhi) -->
-  <section class="home-compact-hero" style="background: linear-gradient(135deg, rgba(20, 83, 45, 0.95), rgba(22, 101, 52, 0.9)), url('https://images.unsplash.com/photo-1463936575829-25148e1db1b8?w=1600') center/cover; color: #ffffff; border-radius: 20px; padding: 2.5rem 2rem; margin-bottom: 2rem; box-shadow: 0 15px 35px rgba(22, 101, 52, 0.15); display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden;">
+        <!-- Quick Filter Tags -->
+        <div class="quick-tags-row">
+          <a href="#plants-section" class="quick-tag-chip hero-quick-filter" data-category="indoor-plants">
+            <span>🌿 Indoor Plants</span>
+          </a>
+          <a href="#plants-section" class="quick-tag-chip hero-quick-filter" data-category="outdoor-plants">
+            <span>☀️ Outdoor Trees</span>
+          </a>
+          <a href="#plants-section" class="quick-tag-chip hero-quick-filter" data-category="flower-plants">
+            <span>🌸 Flower Plants</span>
+          </a>
+          <a href="#plants-section" class="quick-tag-chip hero-quick-filter" data-category="fruit-plants">
+            <span>🍎 Fruit Plants</span>
+          </a>
+          <a href="#plants-section" class="quick-tag-chip hero-quick-filter" data-category="medicinal-plants">
+            <span>🩺 Medicinal Herbs</span>
+          </a>
+        </div>
+        
+        <div class="hero-actions" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <a href="#plants-section" class="btn btn-primary btn-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg> Shop Plant Catalog
+          </a>
+          
+          <a href="{{ url_for('care_tips') }}" class="btn btn-outline btn-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Care Guide
+          </a>
+        </div>
+
+        <div class="hero-features-list">
+          <div class="hero-feature-item">
+            <div class="hero-feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <div class="hero-feature-text">
+              <h4>Transit Guarantee</h4>
+              <p>100% Replacement</p>
+            </div>
+          </div>
+          <div class="hero-feature-item">
+            <div class="hero-feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-5l-3-4h-5v10"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+            </div>
+            <div class="hero-feature-text">
+              <h4>Fast Shipping</h4>
+              <p>Free over ₹999</p>
+            </div>
+          </div>
+          <div class="hero-feature-item">
+            <div class="hero-feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </div>
+            <div class="hero-feature-text">
+              <h4>Plant Doctor</h4>
+              <p>Free Care Support</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-img-box">
+        <img src="https://images.unsplash.com/photo-1545241047-6083a3684587?w=1000&auto=format&fit=crop&q=80" alt="Greeni5 Nursery Plants" class="hero-main-img">
+        <div class="hero-floating-card">
+          <div class="hero-floating-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+            </svg>
+          </div>
+          <div>
+            <h4 style="font-size: 0.95rem; font-weight: 800; color: #0b2e17;">Fresh Organic Plants</h4>
+            <p style="font-size: 0.8rem; color: #3d5e49;">Direct from greenhouse</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. ALL LIVING PLANTS UP FRONT ("mundhu ki ravali") -->
+<section id="plants-section" class="section" style="padding-top: 2rem; scroll-margin-top: 80px;">
+  <div class="container">
     
-    <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); padding: 5px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.25);">
-      🌿 Fresh Direct From Botanical Greenhouse &bull; Pan-India Delivery
+    <!-- Section Title & Live Instant Search -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2rem;">
+      <div>
+        <div class="section-subtitle" style="display: flex; align-items: center; gap: 6px;">
+          <span>🌱</span> 100% Potted &amp; Acclimatized Nursery Plants
+        </div>
+        <h2 class="section-title" style="margin-bottom: 0.4rem;">
+          All Botanical Varieties &bull; Living Collection
+        </h2>
+        <p class="section-desc" style="max-width: 600px;">
+          Browse all nursery plants right here! Use instant search or category filters to find the ideal green companion for your home or garden.
+        </p>
+      </div>
+
+      <!-- Live Search Box -->
+      <div style="min-width: 280px; max-width: 360px; width: 100%; position: relative;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%);">
+          <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="home-plant-search" placeholder="Search plant (e.g. Monstera, Rose, Tulsi, Mango)..." style="width: 100%; padding: 11px 16px 11px 42px; border-radius: 30px; border: 1.5px solid #86efac; font-size: 0.925rem; outline: none; background: #ffffff; color: #0f172a; box-shadow: 0 4px 15px rgba(22, 163, 74, 0.08);">
+      </div>
     </div>
 
-    <h1 style="font-size: 2.4rem; font-weight: 800; margin-bottom: 0.6rem; color: #ffffff; line-height: 1.2;">
-      All Living Plants &bull; Ready For Your Home
-    </h1>
-
-    <p style="color: #bbf7d0; font-size: 1.05rem; max-width: 650px; margin-bottom: 1.75rem; line-height: 1.5;">
-      Scroll cheyakunda anni plants ikkade chudandi! 100% healthy, acclimatized, transit-guaranteed botanical varieties.
-    </p>
-
-    <!-- Instant Search Bar Directly in Hero -->
-    <div style="width: 100%; max-width: 600px; position: relative;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%);">
-        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
-      <input type="text" id="home-plant-search" placeholder="Search any plant (e.g. Monstera, Tulsi, Rose, ZZ Plant, Mango)..." style="width: 100%; padding: 14px 20px 14px 48px; border-radius: 30px; border: 2px solid #86efac; font-size: 1rem; outline: none; background: #ffffff; color: #0f172a; box-shadow: 0 8px 25px rgba(0,0,0,0.12);">
-    </div>
-
-    <!-- Quick Features Chips -->
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; font-size: 0.825rem; font-weight: 600; color: #dcfce7;">
-      <span>🌱 7-Day Replacement Guarantee</span>
-      <span>•</span>
-      <span>📦 100% Eco Packaging</span>
-      <span>•</span>
-      <span>📖 <a href="{{ url_for('care_tips') }}" style="color: #ffffff; text-decoration: underline; font-weight: 700;">Complete Care Guide &rarr;</a></span>
-    </div>
-  </section>
-
-  <!-- Controls Toolbar: Category Pills & Sort -->
-  <div style="background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(14px); border: 1.5px solid var(--glass-border-green); border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; box-shadow: 0 8px 25px rgba(22, 101, 52, 0.06); display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;">
-    
-    <!-- Category Filter Chips -->
-    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;" id="home-cat-chips-bar">
-      <button type="button" class="home-cat-chip active" data-cat="all">
-        All Plants ({{ plants|length }})
-      </button>
-      {% for cat in categories %}
-        <button type="button" class="home-cat-chip" data-cat="{{ cat.slug }}">
-          {{ cat.name }}
+    <!-- Category Pills & Sort Bar -->
+    <div style="background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(14px); border: 1.5px solid var(--glass-border-green); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 2rem; box-shadow: 0 8px 25px rgba(22, 101, 52, 0.06); display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;">
+      
+      <!-- Category Filter Chips -->
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;" id="home-cat-chips-bar">
+        <button type="button" class="home-cat-chip active" data-cat="all">
+          All Plants ({{ plants|length }})
         </button>
+        {% for cat in categories %}
+          <button type="button" class="home-cat-chip" data-cat="{{ cat.slug }}">
+            {{ cat.name }}
+          </button>
+        {% endfor %}
+      </div>
+
+      <!-- Counter & Sort -->
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <span id="home-plants-count-badge" style="font-size: 0.85rem; font-weight: 700; color: #15803d; background: #dcfce7; padding: 4px 12px; border-radius: 20px;">
+          {{ plants|length }} Plants
+        </span>
+        <select id="home-sort-select" style="padding: 7px 14px; border: 1.5px solid #cbd5e1; border-radius: 20px; font-size: 0.85rem; font-weight: 700; background: #ffffff; color: #1e293b; cursor: pointer;">
+          <option value="popular">Most Popular</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="name">Name: A to Z</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Product Grid of ALL PLANTS -->
+    <div id="home-plants-grid" class="product-grid">
+      {% for plant in plants %}
+        <div class="product-card" id="plant-{{ plant.id }}" data-category="{{ plant.category_slug }}" data-name="{{ plant.name|lower }}" data-price="{{ plant.discount_price or plant.price }}" data-bestseller="{{ 1 if plant.is_bestseller else 0 }}">
+          
+          <!-- Image & Badges -->
+          <div class="product-card-img-wrap">
+            <a href="{{ url_for('plant_details', slug=plant.slug) }}" style="display: block; width: 100%; height: 100%;">
+              <img src="{{ plant.image_url }}" alt="{{ plant.name }}" class="product-card-img" loading="lazy">
+            </a>
+
+            <div class="product-badges">
+              {% if plant.is_bestseller %}
+                <span class="badge badge-bestseller">Bestseller</span>
+              {% endif %}
+              {% if plant.discount_price and plant.discount_price < plant.price %}
+                <span class="badge badge-sale">
+                  {{ ((plant.price - plant.discount_price) / plant.price * 100) | round | int }}% OFF
+                </span>
+              {% endif %}
+            </div>
+
+            <!-- Wishlist Heart Toggle Button -->
+            <button type="button" class="wishlist-toggle-btn" data-plant-id="{{ plant.id }}" title="Add to Wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Product Body -->
+          <div class="product-card-body">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem;">
+              <span class="product-category">{{ plant.category_name }}</span>
+              <span style="font-size: 0.725rem; font-weight: 700; color: #166534; background: #f0fdf4; padding: 2px 6px; border-radius: 4px; border: 1px solid #bbf7d0;">
+                ⭐ {{ plant.difficulty }}
+              </span>
+            </div>
+
+            <h3 class="product-title">
+              <a href="{{ url_for('plant_details', slug=plant.slug) }}" title="{{ plant.name }}">
+                {{ plant.name }}
+              </a>
+            </h3>
+
+            <!-- Sunlight & Watering Mini Attributes -->
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.85rem;">
+              <span style="font-size: 0.72rem; color: #3d5e49; background: #f1fbf4; padding: 2px 7px; border-radius: 4px; border: 1px solid #dcfce7; display: inline-flex; align-items: center; gap: 4px;">
+                ☀️ {{ plant.sunlight.split(';')[0][:18] }}...
+              </span>
+              <span style="font-size: 0.72rem; color: #3d5e49; background: #f1fbf4; padding: 2px 7px; border-radius: 4px; border: 1px solid #dcfce7; display: inline-flex; align-items: center; gap: 4px;">
+                💧 {{ plant.watering.split(';')[0][:18] }}...
+              </span>
+            </div>
+
+            <!-- Price & Actions Row -->
+            <div class="product-price-row">
+              <div>
+                {% if plant.discount_price and plant.discount_price < plant.price %}
+                  <span class="current-price">{{ plant.discount_price | currency }}</span>
+                  <span class="original-price">{{ plant.price | currency }}</span>
+                {% else %}
+                  <span class="current-price">{{ plant.price | currency }}</span>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 8px; margin-top: 0.85rem;">
+              <button type="button" class="btn btn-primary btn-sm ajax-add-to-cart" data-plant-id="{{ plant.id }}" style="flex: 1;" aria-label="Add {{ plant.name }} to cart">
+                Add to Cart
+              </button>
+              <a href="{{ url_for('plant_details', slug=plant.slug) }}" class="btn btn-outline btn-sm" style="padding: 6px 12px; font-weight: 700;" title="View Care & Details">
+                Details
+              </a>
+            </div>
+
+          </div>
+
+        </div>
       {% endfor %}
     </div>
 
-    <!-- Sort & Plant Counter -->
-    <div style="display: flex; align-items: center; gap: 1rem;">
-      <span id="home-plants-count-badge" style="font-size: 0.875rem; font-weight: 700; color: #15803d; background: #dcfce7; padding: 4px 12px; border-radius: 20px;">
-        {{ plants|length }} Plants Available
-      </span>
-      <select id="home-sort-select" style="padding: 8px 14px; border: 1.5px solid #cbd5e1; border-radius: 20px; font-size: 0.85rem; font-weight: 700; background: #ffffff; color: #1e293b; cursor: pointer;">
-        <option value="popular">Most Popular</option>
-        <option value="price-low">Price: Low to High</option>
-        <option value="price-high">Price: High to Low</option>
-        <option value="name">Name: A to Z</option>
-      </select>
+    <!-- Empty Search Results Box -->
+    <div id="home-no-results" style="display: none; text-align: center; padding: 4rem 2rem; background: #ffffff; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">🔍🌿</div>
+      <h3 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">No matching plants found</h3>
+      <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem;">Try another keyword or click "All Plants" to clear filters.</p>
+      <button type="button" class="btn btn-primary btn-sm" id="btn-reset-home-search">Reset Search</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- 3. EXPLORE BY PLANT CATEGORY AT BOTTOM ("evi anni bottom lo pettu" - Screenshot 2) -->
+<section class="section" style="background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); padding: 4rem 0; border-top: 1px solid var(--border); margin-top: 3rem;">
+  <div class="container">
+    <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+      <span class="section-subtitle">Botanical Collections</span>
+      <h2 class="section-title">Explore by Plant Category</h2>
+      <p class="section-desc">Hand-picked categories tailored for balconies, verandas, living rooms, and kitchen gardens.</p>
+    </div>
+
+    <div class="category-grid">
+      {% for cat in categories %}
+        <a href="#plants-section" class="category-card home-category-jump" data-category="{{ cat.slug }}">
+          <img src="{{ cat.image_url }}" alt="{{ cat.name }}" class="category-card-img" loading="lazy">
+          <div class="category-card-content">
+            <h3 class="category-card-title">{{ cat.name }}</h3>
+            <p class="category-card-desc">{{ cat.description }}</p>
+          </div>
+        </a>
+      {% endfor %}
     </div>
   </div>
+</section>
 
-  <!-- ALL PLANTS PRODUCT GRID (Everything in one clean place) -->
-  <div id="home-plants-grid" class="product-grid">
-    {% for plant in plants %}
-      <div class="product-card" id="plant-{{ plant.id }}" data-category="{{ plant.category_slug }}" data-name="{{ plant.name|lower }}" data-price="{{ plant.discount_price or plant.price }}" data-bestseller="{{ 1 if plant.is_bestseller else 0 }}">
-        
-        <!-- Image & Badges -->
-        <div class="product-card-img-wrap">
-          <a href="{{ url_for('plant_details', slug=plant.slug) }}" style="display: block; width: 100%; height: 100%;">
-            <img src="{{ plant.image_url }}" alt="{{ plant.name }}" class="product-card-img" loading="lazy">
-          </a>
-
-          <div class="product-badges">
-            {% if plant.is_bestseller %}
-              <span class="badge badge-bestseller">Bestseller</span>
-            {% endif %}
-            {% if plant.discount_price and plant.discount_price < plant.price %}
-              <span class="badge badge-sale">
-                {{ ((plant.price - plant.discount_price) / plant.price * 100) | round | int }}% OFF
-              </span>
-            {% endif %}
-          </div>
-
-          <!-- Wishlist Heart Toggle Button -->
-          <button type="button" class="wishlist-toggle-btn" data-plant-id="{{ plant.id }}" title="Add to Wishlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Product Body -->
-        <div class="product-card-body">
-          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem;">
-            <span class="product-category">{{ plant.category_name }}</span>
-            <span style="font-size: 0.725rem; font-weight: 700; color: #166534; background: #f0fdf4; padding: 2px 6px; border-radius: 4px; border: 1px solid #bbf7d0;">
-              ⭐ {{ plant.difficulty }}
-            </span>
-          </div>
-
-          <h3 class="product-title">
-            <a href="{{ url_for('plant_details', slug=plant.slug) }}" title="{{ plant.name }}">
-              {{ plant.name }}
-            </a>
-          </h3>
-
-          <!-- Sunlight & Watering Mini Attributes -->
-          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.85rem;">
-            <span style="font-size: 0.72rem; color: #3d5e49; background: #f1fbf4; padding: 2px 7px; border-radius: 4px; border: 1px solid #dcfce7; display: inline-flex; align-items: center; gap: 4px;">
-              ☀️ {{ plant.sunlight.split(';')[0][:18] }}...
-            </span>
-            <span style="font-size: 0.72rem; color: #3d5e49; background: #f1fbf4; padding: 2px 7px; border-radius: 4px; border: 1px solid #dcfce7; display: inline-flex; align-items: center; gap: 4px;">
-              💧 {{ plant.watering.split(';')[0][:18] }}...
-            </span>
-          </div>
-
-          <!-- Price & Actions Row -->
-          <div class="product-price-row">
-            <div>
-              {% if plant.discount_price and plant.discount_price < plant.price %}
-                <span class="current-price">{{ plant.discount_price | currency }}</span>
-                <span class="original-price">{{ plant.price | currency }}</span>
-              {% else %}
-                <span class="current-price">{{ plant.price | currency }}</span>
-              {% endif %}
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div style="display: flex; gap: 8px; margin-top: 0.85rem;">
-            <button type="button" class="btn btn-primary btn-sm ajax-add-to-cart" data-plant-id="{{ plant.id }}" style="flex: 1;" aria-label="Add {{ plant.name }} to cart">
-              Add to Cart
-            </button>
-            <a href="{{ url_for('plant_details', slug=plant.slug) }}" class="btn btn-outline btn-sm" style="padding: 6px 12px; font-weight: 700;" title="View Care & Details">
-              Details
-            </a>
-          </div>
-
-        </div>
-
-      </div>
-    {% endfor %}
-  </div>
-
-  <!-- Empty Search Results Box -->
-  <div id="home-no-results" style="display: none; text-align: center; padding: 4rem 2rem; background: #ffffff; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
-    <div style="font-size: 3rem; margin-bottom: 1rem;">🔍🌿</div>
-    <h3 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">No matching plants found</h3>
-    <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem;">Try another keyword or click "All Plants" to clear filters.</p>
-    <button type="button" class="btn btn-primary btn-sm" id="btn-reset-home-search">Reset Search</button>
-  </div>
-
-</div>
-
-<!-- Styles for Clean Homepage -->
+<!-- Styles for Homepage Filter Chips -->
 <style>
 .home-cat-chip {
   padding: 7px 16px;
@@ -186,15 +298,6 @@
   border-color: #15803d;
   box-shadow: 0 4px 14px rgba(22, 163, 74, 0.28);
 }
-
-@media (max-width: 768px) {
-  .home-compact-hero {
-    padding: 2rem 1.25rem !important;
-  }
-  .home-compact-hero h1 {
-    font-size: 1.75rem !important;
-  }
-}
 </style>
 
 <!-- Live Instant Filter & Sort Script for Homepage -->
@@ -202,6 +305,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("home-plant-search");
   const catChips = document.querySelectorAll(".home-cat-chip");
+  const heroFilters = document.querySelectorAll(".hero-quick-filter");
+  const bottomCategoryJumps = document.querySelectorAll(".home-category-jump");
   const sortSelect = document.getElementById("home-sort-select");
   const grid = document.getElementById("home-plants-grid");
   const countBadge = document.getElementById("home-plants-count-badge");
@@ -210,6 +315,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let activeCat = "all";
   let searchWord = "";
+
+  function setCategory(catSlug) {
+    activeCat = catSlug;
+    catChips.forEach(c => {
+      if (c.dataset.cat === catSlug) {
+        c.classList.add("active");
+      } else {
+        c.classList.remove("active");
+      }
+    });
+    updateHomepageGrid();
+  }
 
   function updateHomepageGrid() {
     const cards = Array.from(grid.querySelectorAll(".product-card"));
@@ -231,7 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     if (countBadge) {
-      countBadge.textContent = `${visibleCount} Plants Available`;
+      countBadge.textContent = `${visibleCount} Plants`;
     }
 
     if (noResults) {
@@ -276,10 +393,31 @@ document.addEventListener("DOMContentLoaded", () => {
   // Category chip clicking
   catChips.forEach(chip => {
     chip.addEventListener("click", () => {
-      catChips.forEach(c => c.classList.remove("active"));
-      chip.classList.add("active");
-      activeCat = chip.dataset.cat || "all";
-      updateHomepageGrid();
+      setCategory(chip.dataset.cat || "all");
+    });
+  });
+
+  // Hero Quick Filter Chips clicking
+  heroFilters.forEach(tag => {
+    tag.addEventListener("click", (e) => {
+      const targetCat = tag.dataset.category;
+      if (targetCat) {
+        setCategory(targetCat);
+        const section = document.getElementById("plants-section");
+        if (section) section.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  });
+
+  // Bottom Category cards clicking -> Filter & smooth scroll up to plants
+  bottomCategoryJumps.forEach(card => {
+    card.addEventListener("click", (e) => {
+      const targetCat = card.dataset.category;
+      if (targetCat) {
+        setCategory(targetCat);
+        const section = document.getElementById("plants-section");
+        if (section) section.scrollIntoView({ behavior: "smooth" });
+      }
     });
   });
 
@@ -295,11 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBtn.addEventListener("click", () => {
       if (searchInput) searchInput.value = "";
       searchWord = "";
-      activeCat = "all";
-      catChips.forEach(c => c.classList.remove("active"));
-      const allChip = document.querySelector(".home-cat-chip[data-cat='all']");
-      if (allChip) allChip.classList.add("active");
-      updateHomepageGrid();
+      setCategory("all");
     });
   }
 });

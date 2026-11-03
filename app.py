@@ -17,6 +17,16 @@ from werkzeug.utils import secure_filename
 from database import get_db, close_db, query_db, execute_db
 
 app = Flask(__name__)
+
+@app.after_request
+def add_cache_control_headers(response):
+    # Prevent browser from serving stale cached HTML pages so users always see live state automatically
+    if response.content_type and 'text/html' in response.content_type:
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
+
 app.secret_key = 'greeni5-secret-key-production-ready-plants-2026'
 app.teardown_appcontext(close_db)
 
@@ -931,7 +941,7 @@ def login():
                     return redirect(target)
             if user['role'] == 'admin':
                 return redirect(url_for('admin_dashboard'))
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('index'))
         else:
             flash('Invalid email address or password.', 'danger')
 
@@ -975,7 +985,7 @@ def register():
         session['user_role'] = 'customer'
         session['user_name'] = name
         flash('Account registered successfully! Welcome to Greeni5.', 'success')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('index'))
 
     return render_template('register.html')
 

@@ -618,3 +618,10 @@ document.addEventListener("DOMContentLoaded", () => {
     updatePaymentHighlight();
   }
 });
+
+// Auto-refresh stale pages restored from browser back-forward cache (bfcache)
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    window.location.reload();
+  }
+});
