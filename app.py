@@ -304,44 +304,29 @@ def track_abandoned_cart():
 def index():
     categories = query_db('SELECT * FROM categories ORDER BY id ASC')
     
-    # Base plant query with category name, primary image, ratings
+    # Complete plant query with category name, slug, primary image, ratings
     plant_select_base = '''
-        SELECT p.*, c.name as category_name,
+        SELECT p.*, c.name as category_name, c.slug as category_slug,
                COALESCE((SELECT image_url FROM plant_images WHERE plant_id = p.id AND is_primary = 1 LIMIT 1),
                         (SELECT image_url FROM plant_images WHERE plant_id = p.id LIMIT 1),
                         'https://images.unsplash.com/photo-1545241047-6083a3684587?w=800') as image_url,
-               (SELECT ROUND(AVG(rating), 1) FROM reviews WHERE plant_id = p.id) as avg_rating,
-               (SELECT COUNT(*) FROM reviews WHERE plant_id = p.id) as review_count
+               (SELECT ROUND(AVG(rating), 1) FROM reviews WHERE plant_id = p.id AND is_approved = 1) as avg_rating,
+               (SELECT COUNT(*) FROM reviews WHERE plant_id = p.id AND is_approved = 1) as review_count
         FROM plants p
         JOIN categories c ON p.category_id = c.id
+        WHERE p.stock > 0
+        ORDER BY p.is_bestseller DESC, p.id ASC
     '''
 
-    featured_plants = query_db(plant_select_base + ' WHERE p.is_featured = 1 ORDER BY p.id DESC LIMIT 8')
-    # If no plant specifically marked featured, show all recent plants
-    if not featured_plants:
-        featured_plants = query_db(plant_select_base + ' ORDER BY p.id DESC LIMIT 8')
-
-    bestseller_plants = query_db(plant_select_base + ' WHERE p.is_bestseller = 1 ORDER BY p.id DESC LIMIT 8')
-    if not bestseller_plants and len(featured_plants) > 4:
-        bestseller_plants = featured_plants[4:8]
-
-    # Total plant count to help UI display empty states or catalog counters
-    total_plants_count = query_db('SELECT count(*) as cnt FROM plants', one=True)['cnt']
-
-    customer_reviews = query_db('''
-        SELECT r.*, p.name as plant_name, p.slug as plant_slug
-        FROM reviews r
-        JOIN plants p ON r.plant_id = p.id
-        ORDER BY r.id DESC LIMIT 4
-    ''')
+    all_plants = query_db(plant_select_base)
+    if not all_plants:
+        all_plants = query_db(plant_select_base.replace('WHERE p.stock > 0', 'WHERE 1=1'))
 
     return render_template(
         'index.html',
         categories=categories,
-        featured_plants=featured_plants,
-        bestseller_plants=bestseller_plants,
-        customer_reviews=customer_reviews,
-        total_plants_count=total_plants_count
+        plants=all_plants,
+        total_plants_count=len(all_plants)
     )
 
 @app.route('/catalog')
