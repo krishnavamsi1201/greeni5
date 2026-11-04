@@ -17,24 +17,6 @@
   </div>
 
   {% if cart.cart_items %}
-    <!-- Free Shipping Progress Threshold -->
-    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
-      {% if cart.amount_for_free_shipping > 0 %}
-        <p style="font-size: 0.95rem; font-weight: 600; color: #166534; margin-bottom: 0.5rem;">
-          🚚 Add <strong>{{ cart.amount_for_free_shipping | currency }}</strong> more to unlock <strong>FREE Delivery</strong>!
-        </p>
-        <div style="background: #e2e8f0; border-radius: var(--radius-full); height: 8px; overflow: hidden;">
-          {% set pct = (cart.subtotal / cart.free_shipping_threshold * 100) | round | int %}
-          <div style="background: var(--primary); height: 100%; width: {{ pct }}%;"></div>
-        </div>
-      {% else %}
-        <div style="display: flex; align-items: center; gap: 0.5rem; color: #15803d; font-weight: 700; font-size: 0.95rem;">
-          <i data-lucide="check-circle-2" style="width: 20px; height: 20px;"></i>
-          <span>Congratulations! You have unlocked FREE Express Delivery!</span>
-        </div>
-      {% endif %}
-    </div>
-
     <div class="cart-grid">
       <!-- Items Table Card -->
       <div class="cart-table-card">
