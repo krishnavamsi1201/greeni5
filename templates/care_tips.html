@@ -8,13 +8,13 @@
   <!-- Hero Header -->
   <div style="text-align: center; margin-bottom: 3rem;">
     <span class="badge" style="background: #dcfce7; color: #15803d; font-weight: 700; padding: 6px 16px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.875rem; margin-bottom: 0.75rem; border: 1px solid #86efac;">
-      🌿 Complete Botanical Care Encyclopedia
+      🌿 Greeni5 Simple & Clear Care Guide
     </span>
     <h1 style="font-size: 2.5rem; font-weight: 800; color: #0b2e17; margin-bottom: 0.75rem;">
-      Each &amp; Every Plant Care Master Guide
+      🌿 Prathi Plant Care Guide (Manam Matladukune Style Lo!)
     </h1>
     <p style="color: #475569; font-size: 1.1rem; max-width: 720px; margin: 0 auto; line-height: 1.6;">
-      Prathi plant ki ela care teesukovali, <strong>adhi chesty em avthundi</strong> &amp; <strong>cheyaka pothe em avthundi</strong> ani complete detailed visual guide.
+      Bhai, prathi plant ki <strong>ela care teesukovali</strong>, <strong>adhi chesty em avthundi</strong> &amp; <strong>cheyaka pothe em damage avthundi</strong> ani mana style lo clear ga explain chesam!
     </p>
   </div>
 
@@ -26,13 +26,13 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%);">
           <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" id="plant-care-search" placeholder="Search plant by name (e.g. Monstera, Tulsi, Rose, ZZ Plant, Mango)..." style="width: 100%; padding: 12px 14px 12px 42px; border: 1.5px solid #cbd5e1; border-radius: 30px; font-size: 0.95rem; outline: none; transition: all 0.2s; background: #ffffff;">
+        <input type="text" id="plant-care-search" placeholder="Plant peru search cheyandi (e.g. Money Plant, Tulsi, Rose, Monstera, Mango)..." style="width: 100%; padding: 12px 14px 12px 42px; border: 1.5px solid #cbd5e1; border-radius: 30px; font-size: 0.95rem; outline: none; transition: all 0.2s; background: #ffffff;">
       </div>
 
       <!-- Quick Jump Selector -->
       <div style="min-width: 220px;">
         <select id="quick-plant-jump" style="width: 100%; padding: 11px 16px; border: 1.5px solid #cbd5e1; border-radius: 30px; font-size: 0.9rem; background: #ffffff; cursor: pointer; font-weight: 600; color: #1e293b;">
-          <option value="">⚡ Quick Jump to Plant...</option>
+          <option value="">⚡ Plant ni select cheyandi...</option>
           {% for plant in plants %}
             <option value="plant-care-{{ plant.id }}">{{ plant.name }}</option>
           {% endfor %}
@@ -42,7 +42,7 @@
 
     <!-- Category Filter Chips -->
     <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-      <span style="font-size: 0.85rem; font-weight: 700; color: #64748b; margin-right: 4px;">Filter Category:</span>
+      <span style="font-size: 0.85rem; font-weight: 700; color: #64748b; margin-right: 4px;">Category Filter:</span>
       <button type="button" class="care-cat-chip active" data-category="all">All Plants ({{ plants|length }})</button>
       {% for cat in categories %}
         <button type="button" class="care-cat-chip" data-category="{{ cat.slug }}">{{ cat.name }}</button>
@@ -53,10 +53,10 @@
   <!-- Plant Count Bar -->
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding: 0 0.5rem;">
     <div style="font-size: 0.95rem; font-weight: 700; color: #15803d;" id="care-results-counter">
-      Showing all {{ plants|length }} plant care guides
+      Motham {{ plants|length }} plants care guides ikkade unnay bhai
     </div>
     <div style="font-size: 0.825rem; color: #64748b;">
-      💡 Tip: Click any plant's "Order Plant" button to buy it directly!
+      💡 Direct ga plant nachithe "Buy Plant" kottandi!
     </div>
   </div>
 
@@ -105,28 +105,28 @@
           <div class="care-stat-item">
             <span class="care-stat-icon">☀️</span>
             <div>
-              <div class="care-stat-label">Sunlight</div>
+              <div class="care-stat-label">Sunlight (Enda)</div>
               <div class="care-stat-value">{{ plant.sunlight }}</div>
             </div>
           </div>
           <div class="care-stat-item">
             <span class="care-stat-icon">💧</span>
             <div>
-              <div class="care-stat-label">Watering</div>
+              <div class="care-stat-label">Watering (Neellu)</div>
               <div class="care-stat-value">{{ plant.watering }}</div>
             </div>
           </div>
           <div class="care-stat-item">
             <span class="care-stat-icon">🌡️</span>
             <div>
-              <div class="care-stat-label">Temperature</div>
+              <div class="care-stat-label">Temperature (Vedi)</div>
               <div class="care-stat-value">{{ plant.temperature }}</div>
             </div>
           </div>
           <div class="care-stat-item">
             <span class="care-stat-icon">🪴</span>
             <div>
-              <div class="care-stat-label">Ideal Soil</div>
+              <div class="care-stat-label">Ideal Soil (Matti)</div>
               <div class="care-stat-value">{{ plant.soil }}</div>
             </div>
           </div>
@@ -141,12 +141,12 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>
               </svg>
-              <span>ADHI CHESTY (DOING IT RIGHT)</span>
+              <span>🟢 ADHI CHESTY (Doing It Right)</span>
             </div>
 
             <div class="care-sub-block">
               <h4 style="font-size: 0.85rem; font-weight: 800; color: #166534; text-transform: uppercase; margin-bottom: 0.25rem;">
-                👉 Ela Care Teesukovali:
+                👉 Ela Care Teesukovali (Super Easy):
               </h4>
               <p style="font-size: 0.9rem; color: #1e293b; line-height: 1.5;">
                 {{ plant.care.do_this.action }}
@@ -155,7 +155,7 @@
 
             <div class="care-sub-block" style="background: rgba(255, 255, 255, 0.7); padding: 12px; border-radius: 10px; border-left: 3px solid #16a34a;">
               <h4 style="font-size: 0.85rem; font-weight: 800; color: #15803d; text-transform: uppercase; margin-bottom: 0.25rem;">
-                ✨ Em Avthundi (Healthy Results):
+                ✨ Adhi Chesty Em Avthundi (Result):
               </h4>
               <p style="font-size: 0.9rem; color: #14532d; font-weight: 600; line-height: 1.5;">
                 {{ plant.care.do_this.outcome }}
@@ -169,12 +169,12 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
               </svg>
-              <span>CHEYAKA POTY (COMMON MISTAKES)</span>
+              <span>🔴 CHEYAKA POTY (Thappu Chesthe)</span>
             </div>
 
             <div class="care-sub-block">
               <h4 style="font-size: 0.85rem; font-weight: 800; color: #991b1b; text-transform: uppercase; margin-bottom: 0.25rem;">
-                ❌ Em Thappu Chestunnam:
+                ❌ Cheyaka Pothe / Thappu Chesthe:
               </h4>
               <p style="font-size: 0.9rem; color: #1e293b; line-height: 1.5;">
                 {{ plant.care.dont_do_this.mistake }}
@@ -183,7 +183,7 @@
 
             <div class="care-sub-block" style="background: rgba(255, 255, 255, 0.7); padding: 12px; border-radius: 10px; border-left: 3px solid #dc2626;">
               <h4 style="font-size: 0.85rem; font-weight: 800; color: #b91c1c; text-transform: uppercase; margin-bottom: 0.25rem;">
-                ⚠️ Em Avthundi (Damage / Side Effects):
+                ⚠️ Ala Cheyakapothe Em Avthundi (Damage):
               </h4>
               <p style="font-size: 0.9rem; color: #7f1d1d; font-weight: 600; line-height: 1.5;">
                 {{ plant.care.dont_do_this.consequence }}
@@ -198,7 +198,7 @@
           <div style="display: flex; gap: 10px; align-items: center;">
             <span style="font-size: 1.4rem;">🩺</span>
             <div>
-              <span style="font-weight: 800; font-size: 0.875rem; color: #065f46; text-transform: uppercase; letter-spacing: 0.5px;">Doctor's Emergency Action:</span>
+              <span style="font-weight: 800; font-size: 0.875rem; color: #065f46; text-transform: uppercase; letter-spacing: 0.5px;">🩺 Plant Doctor Urgent Tip:</span>
               <span style="font-size: 0.875rem; color: #1e293b; margin-left: 6px;">{{ plant.care.emergency_fix }}</span>
             </div>
           </div>
@@ -211,9 +211,9 @@
   <!-- No Results Found Box (Hidden by default) -->
   <div id="care-no-results" style="display: none; text-align: center; padding: 4rem 2rem; background: #ffffff; border-radius: 20px; border: 1px solid var(--border); margin-top: 2rem;">
     <div style="font-size: 3rem; margin-bottom: 1rem;">🔍🌱</div>
-    <h3 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">No matching plant care guide found</h3>
-    <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem;">Try searching for another plant name or click "All Plants" to reset filters.</p>
-    <button type="button" class="btn btn-primary btn-sm" id="btn-reset-care-search">Reset Search</button>
+    <h3 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">Aa peru tho plant dorakaledu bhai!</h3>
+    <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem;">Vere peru try cheyyandi ledha kindha "Reset Search" kotti motham chudandi.</p>
+    <button type="button" class="btn btn-primary btn-sm" id="btn-reset-care-search">Malli Anni Chudandi (Reset)</button>
   </div>
 
 </div>

@@ -45,7 +45,7 @@ class TestGreeni5V3Features(unittest.TestCase):
         """Test Feature 1: Comprehensive Plant Care Master Guide with Adhi Chesty vs Cheyaka Poty"""
         r = self.s_user.get(f"{BASE_URL}/care-tips")
         self.assertEqual(r.status_code, 200)
-        self.assertIn("Each &amp; Every Plant Care Master Guide", r.text)
+        self.assertIn("Plant Care Guide", r.text)
         self.assertIn("ADHI CHESTY", r.text)
         self.assertIn("CHEYAKA POTY", r.text)
         self.assertIn("Golden Pothos", r.text)
