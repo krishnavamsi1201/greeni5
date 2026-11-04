@@ -232,20 +232,11 @@ def get_cart_details():
 
     subtotal_after_discount = max(0.0, subtotal - flash_discount)
 
-    # Coupon code discount calculation
+    # Coupon code discount disabled per user request
     coupon_discount = 0.0
-    applied_coupon = session.get('coupon')
-    if applied_coupon and subtotal_after_discount > 0:
-        c_type = applied_coupon.get('type')
-        c_val = float(applied_coupon.get('val', 0.0))
-        if c_type == 'pct':
-            coupon_discount = round(subtotal_after_discount * (c_val / 100.0), 2)
-        elif c_type == 'flat':
-            coupon_discount = min(subtotal_after_discount, c_val)
-
-    subtotal_after_coupon = max(0.0, subtotal_after_discount - coupon_discount)
-    is_freeship = (applied_coupon and applied_coupon.get('type') == 'freeship')
-    shipping = 0.0 if (subtotal_after_coupon >= 999 or subtotal_after_coupon == 0 or is_freeship) else 99.0
+    applied_coupon = None
+    subtotal_after_coupon = subtotal_after_discount
+    shipping = 0.0 if (subtotal_after_coupon >= 999 or subtotal_after_coupon == 0) else 99.0
     tax = round(subtotal_after_coupon * 0.05, 2)
     total = round(subtotal_after_coupon + shipping + tax, 2)
 
@@ -685,22 +676,7 @@ def clear_cart():
 
 @app.route('/cart/apply-coupon', methods=['POST'])
 def apply_coupon():
-    code = request.form.get('coupon_code', '').strip().upper()
-    valid_coupons = {
-        'GREEN5': {'code': 'GREEN5', 'type': 'pct', 'val': 5.0, 'desc': '5% Off WhatsApp Offer'},
-        'WELCOME10': {'code': 'WELCOME10', 'type': 'pct', 'val': 10.0, 'desc': '10% Welcome Discount'},
-        'NURSERY50': {'code': 'NURSERY50', 'type': 'flat', 'val': 50.0, 'desc': '₹50 Green Bonus'},
-        'FREESHIP': {'code': 'FREESHIP', 'type': 'freeship', 'val': 0.0, 'desc': '100% Free Shipping'}
-    }
-
-    if code in valid_coupons:
-        session['coupon'] = valid_coupons[code]
-        session.modified = True
-        flash(f"Coupon '{code}' applied successfully! {valid_coupons[code]['desc']}", 'success')
-    else:
-        flash(f"Invalid or expired coupon code '{code}'. Try GREEN5 or WELCOME10.", 'danger')
-
-    return redirect(request.referrer or url_for('cart'))
+    return redirect(url_for('cart'))
 
 @app.route('/cart/remove-coupon', methods=['POST', 'GET'])
 def remove_coupon():

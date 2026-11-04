@@ -174,13 +174,6 @@
             </div>
           {% endif %}
 
-          {% if cart.coupon_discount > 0 %}
-            <div class="summary-row" style="color: #15803d;">
-              <span>🎟️ Coupon ({{ cart.applied_coupon.code }})</span>
-              <span style="font-weight: 700;">- {{ cart.coupon_discount | currency }}</span>
-            </div>
-          {% endif %}
-
           <div class="summary-row">
             <span>Shipping</span>
             {% if cart.shipping == 0 %}
