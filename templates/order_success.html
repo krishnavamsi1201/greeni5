@@ -44,9 +44,7 @@
       <a href="{{ url_for('order_tracking', order_number=order.order_number) }}" class="btn btn-primary btn-lg">
         <i data-lucide="map-pin" style="width: 18px;"></i> Live Track Order
       </a>
-      <a href="{{ url_for('customer_invoice', order_number=order.order_number) }}" target="_blank" class="btn btn-outline btn-lg" style="display: inline-flex; align-items: center; gap: 6px;">
-        <i data-lucide="printer" style="width: 18px;"></i> Download Invoice
-      </a>
+
       <a href="{{ url_for('catalog') }}" class="btn btn-outline btn-lg">
         Continue Shopping
       </a>

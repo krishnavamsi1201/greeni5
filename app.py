@@ -773,11 +773,7 @@ def customer_claim_replacement(order_id):
 
 @app.route('/order/<order_number>/invoice')
 def customer_invoice(order_number):
-    order = query_db('SELECT * FROM orders WHERE order_number = ?', (order_number,), one=True)
-    if not order:
-        abort(404)
-    items = query_db('SELECT * FROM order_items WHERE order_id = ?', (order['id'],))
-    return render_template('admin/invoice.html', order=order, items=items)
+    return redirect(url_for('dashboard') + '#orders')
 
 # ==========================================
 # CHECKOUT & ORDER ROUTES
@@ -898,6 +894,8 @@ def order_tracking(order_number):
 @app.route('/track-order', methods=['GET', 'POST'])
 @app.route('/tracking', methods=['GET', 'POST'])
 def track_lookup():
+    if 'user_id' in session and request.method == 'GET':
+        return redirect(url_for('dashboard') + '#orders')
     if request.method == 'POST':
         order_num = request.form.get('order_number', '').strip()
         if order_num:

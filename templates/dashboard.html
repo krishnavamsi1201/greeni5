@@ -76,67 +76,227 @@
         </div>
       {% endif %}
 
-      <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
-        <i data-lucide="package" style="width: 22px; color: var(--primary);"></i> Order History
-      </h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 0.6rem;">
+          <i data-lucide="package" style="width: 24px; color: var(--primary);"></i> My Orders &amp; Live Tracking
+        </h2>
+        <span style="font-size: 0.85rem; background: #ecfdf5; color: #15803d; padding: 4px 12px; border-radius: 20px; font-weight: 700; border: 1px solid #bbf7d0;">
+          📦 Flipkart-style Live Tracker
+        </span>
+      </div>
 
       {% if orders_with_items %}
-        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
           {% for entry in orders_with_items %}
             {% set ord = entry.order %}
             {% set items = entry.order_items %}
-            <div style="background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: var(--shadow-sm);">
-              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+
+            {# Calculate Flipkart Tracking Step (1 to 5) #}
+            {% set status_step = 1 %}
+            {% set step_label = "Order Confirmed" %}
+            {% set step_desc = "Greenhouse inspection completed. Plant is healthy and ready for packing." %}
+            {% if ord.order_status in ['Accepted', 'Processing'] %}
+              {% set status_step = 2 %}
+              {% set step_label = "Acclimatizing & Packing" %}
+              {% set step_desc = "Plant is receiving moisture barrier and protective eco-packaging." %}
+            {% elif ord.order_status == 'Packed' %}
+              {% set status_step = 2 %}
+              {% set step_label = "Packed & Ready" %}
+              {% set step_desc = "Package is sealed and handed over to courier dispatch bay." %}
+            {% elif ord.order_status == 'Shipped' %}
+              {% set status_step = 3 %}
+              {% set step_label = "Shipped in Transit" %}
+              {% set step_desc = "Shipment is travelling via " ~ (ord.courier_name or 'BlueDart Express') ~ " to your local city hub." %}
+            {% elif ord.order_status == 'Out for Delivery' %}
+              {% set status_step = 4 %}
+              {% set step_label = "Out for Delivery" %}
+              {% set step_desc = "Delivery partner is on the way to your doorstep with live plants today!" %}
+            {% elif ord.order_status == 'Delivered' %}
+              {% set status_step = 5 %}
+              {% set step_label = "Delivered Safely" %}
+              {% set step_desc = "Delivered to recipient. 7-Day Botanical Live Plant Guarantee is active." %}
+            {% elif ord.order_status in ['Cancelled', 'Rejected'] %}
+              {% set status_step = -1 %}
+              {% set step_label = "Order Cancelled" %}
+              {% set step_desc = "This order was cancelled. Refund processed to original payment method." %}
+            {% endif %}
+
+            <div class="flipkart-order-card" style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 1.75rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); transition: all 0.2s;">
+              
+              <!-- Card Header -->
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 1.25rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                 <div>
-                  <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main);">Order #{{ ord.order_number }}</h3>
-                  <span style="font-size: 0.825rem; color: var(--text-muted);">Placed on {{ ord.created_at }}</span>
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.35rem;">
+                    <span style="font-size: 0.8rem; font-weight: 700; background: #f8fafc; color: #475569; padding: 2px 8px; border-radius: 4px; border: 1px solid #cbd5e1;">ORDER</span>
+                    <h3 style="font-size: 1.2rem; font-weight: 800; color: #0f172a; margin: 0;">#{{ ord.order_number }}</h3>
+                  </div>
+                  <div style="font-size: 0.825rem; color: #64748b; display: flex; gap: 12px; flex-wrap: wrap;">
+                    <span>📅 Placed on <strong>{{ ord.created_at }}</strong></span>
+                    <span>•</span>
+                    <span>💳 Paid via <strong>{{ ord.payment_method }} ({{ ord.payment_status }})</strong></span>
+                  </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                  <span class="badge {{ ord.order_status | status_badge }}">{{ ord.order_status }}</span>
-                  <a href="{{ url_for('order_tracking', order_number=ord.order_number) }}" class="btn btn-outline btn-sm" title="Live Track Delivery">
-                    <i data-lucide="map-pin" style="width: 13px;"></i> Track
-                  </a>
-                  <a href="{{ url_for('customer_invoice', order_number=ord.order_number) }}" target="_blank" class="btn btn-sm" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.78rem; padding: 4px 8px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="Print Official Tax Invoice">
-                    <i data-lucide="printer" style="width: 13px;"></i> Invoice
+
+                <div style="text-align: right;">
+                  <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 2px;">Total Order Value</div>
+                  <div style="font-size: 1.3rem; font-weight: 800; color: #15803d;">{{ ord.total_amount | currency }}</div>
+                  <span class="badge {{ ord.order_status | status_badge }}" style="font-size: 0.8rem; padding: 4px 10px; margin-top: 4px; display: inline-block;">
+                    {{ ord.order_status }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- FLIPKART-STYLE LIVE STEPPING TRACKER -->
+              {% if status_step != -1 %}
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                  
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="width: 10px; height: 10px; border-radius: 50%; background: #22c55e; display: inline-block; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);"></span>
+                      <strong style="color: #0f172a; font-size: 0.95rem;">Live Status: {{ step_label }}</strong>
+                    </div>
+                    <span style="font-size: 0.8rem; color: #64748b; font-weight: 600;">
+                      {% if ord.order_status == 'Delivered' %}✅ Delivered{% else %}🚚 Fast Greenhouse Dispatch{% endif %}
+                    </span>
+                  </div>
+
+                  <!-- Visual Stepper Progress Bar -->
+                  <div class="stepper-track-wrap" style="position: relative; margin: 1.75rem 0.5rem 1.25rem 0.5rem;">
+                    
+                    <!-- Background Connector Line -->
+                    <div style="position: absolute; top: 16px; left: 5%; right: 5%; height: 4px; background: #e2e8f0; z-index: 1;"></div>
+                    
+                    <!-- Active Green Connector Line -->
+                    {% set progress_pct = ((status_step - 1) / 4 * 100) | round | int %}
+                    <div style="position: absolute; top: 16px; left: 5%; width: {{ progress_pct }}%; max-width: 90%; height: 4px; background: #16a34a; z-index: 1; transition: width 0.4s ease;"></div>
+
+                    <!-- 5 Steps Nodes -->
+                    <div style="display: flex; justify-content: space-between; position: relative; z-index: 2;">
+                      
+                      <!-- Step 1: Confirmed -->
+                      <div style="text-align: center; flex: 1;">
+                        <div style="width: 34px; height: 34px; border-radius: 50%; background: #16a34a; color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto; font-size: 0.85rem; font-weight: 800; box-shadow: 0 2px 6px rgba(22, 163, 74, 0.35);">
+                          ✓
+                        </div>
+                        <div style="font-size: 0.78rem; font-weight: 700; color: #0f172a;">Confirmed</div>
+                        <div style="font-size: 0.7rem; color: #64748b;">Greenhouse</div>
+                      </div>
+
+                      <!-- Step 2: Packed -->
+                      <div style="text-align: center; flex: 1;">
+                        <div style="width: 34px; height: 34px; border-radius: 50%; background: {{ '#16a34a' if status_step >= 2 else '#ffffff' }}; color: {{ '#ffffff' if status_step >= 2 else '#94a3b8' }}; border: 2px solid {{ '#16a34a' if status_step >= 2 else '#cbd5e1' }}; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto; font-size: 0.85rem; font-weight: 800;">
+                          {{ '✓' if status_step > 2 else ('2' if status_step < 2 else '📦') }}
+                        </div>
+                        <div style="font-size: 0.78rem; font-weight: 700; color: {{ '#0f172a' if status_step >= 2 else '#94a3b8' }};">Packed</div>
+                        <div style="font-size: 0.7rem; color: #64748b;">Eco-Cushion</div>
+                      </div>
+
+                      <!-- Step 3: Shipped -->
+                      <div style="text-align: center; flex: 1;">
+                        <div style="width: 34px; height: 34px; border-radius: 50%; background: {{ '#16a34a' if status_step >= 3 else '#ffffff' }}; color: {{ '#ffffff' if status_step >= 3 else '#94a3b8' }}; border: 2px solid {{ '#16a34a' if status_step >= 3 else '#cbd5e1' }}; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto; font-size: 0.85rem; font-weight: 800;">
+                          {{ '✓' if status_step > 3 else ('3' if status_step < 3 else '🚚') }}
+                        </div>
+                        <div style="font-size: 0.78rem; font-weight: 700; color: {{ '#0f172a' if status_step >= 3 else '#94a3b8' }};">Shipped</div>
+                        <div style="font-size: 0.7rem; color: #64748b;">In Transit</div>
+                      </div>
+
+                      <!-- Step 4: Out for Delivery -->
+                      <div style="text-align: center; flex: 1;">
+                        <div style="width: 34px; height: 34px; border-radius: 50%; background: {{ '#16a34a' if status_step >= 4 else '#ffffff' }}; color: {{ '#ffffff' if status_step >= 4 else '#94a3b8' }}; border: 2px solid {{ '#16a34a' if status_step >= 4 else '#cbd5e1' }}; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto; font-size: 0.85rem; font-weight: 800;">
+                          {{ '✓' if status_step > 4 else ('4' if status_step < 4 else '🛵') }}
+                        </div>
+                        <div style="font-size: 0.78rem; font-weight: 700; color: {{ '#0f172a' if status_step >= 4 else '#94a3b8' }};">Out for Delivery</div>
+                        <div style="font-size: 0.7rem; color: #64748b;">Local Courier</div>
+                      </div>
+
+                      <!-- Step 5: Delivered -->
+                      <div style="text-align: center; flex: 1;">
+                        <div style="width: 34px; height: 34px; border-radius: 50%; background: {{ '#16a34a' if status_step >= 5 else '#ffffff' }}; color: {{ '#ffffff' if status_step >= 5 else '#94a3b8' }}; border: 2px solid {{ '#16a34a' if status_step >= 5 else '#cbd5e1' }}; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto; font-size: 0.85rem; font-weight: 800;">
+                          {{ '🪴' if status_step >= 5 else '5' }}
+                        </div>
+                        <div style="font-size: 0.78rem; font-weight: 700; color: {{ '#16a34a' if status_step >= 5 else '#94a3b8' }};">Delivered</div>
+                        <div style="font-size: 0.7rem; color: #64748b;">Doorstep Safe</div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <!-- Live Courier & Address Strip -->
+                  <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed #cbd5e1; font-size: 0.825rem; color: #334155; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                    <div>
+                      📍 <strong>Shipping To:</strong> {{ ord.shipping_address }}{% if ord.city %}, {{ ord.city }}{% endif %}{% if ord.pincode %} - {{ ord.pincode }}{% endif %}
+                    </div>
+                    {% if ord.courier_name or ord.tracking_number %}
+                      <div style="color: #0369a1; font-weight: 700;">
+                        🚚 {{ ord.courier_name or 'BlueDart' }} AWB: <code>{{ ord.tracking_number or 'AWB-BLR-2026' }}</code>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                </div>
+              {% else %}
+                <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 1rem; color: #991b1b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+                  ❌ {{ step_desc }}
+                </div>
+              {% endif %}
+
+              <!-- Ordered Items List -->
+              <div style="margin-bottom: 1.5rem;">
+                <div style="font-size: 0.85rem; font-weight: 700; color: #475569; margin-bottom: 0.75rem; text-transform: uppercase;">
+                  Purchased Plants &amp; Items ({{ items|length }})
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                  {% for itm in items %}
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #fdfdfd; border: 1px solid #f1f5f9; border-radius: 10px;">
+                      <div style="display: flex; align-items: center; gap: 1rem;">
+                        <img src="{{ itm.image_url }}" alt="{{ itm.plant_name }}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
+                        <div>
+                          <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 3px 0; color: #0f172a;">
+                            {{ itm.plant_name }}
+                          </h4>
+                          <span style="font-size: 0.8rem; color: #64748b;">
+                            Qty: <strong>{{ itm.quantity }}</strong> × {{ itm.price | currency }}
+                          </span>
+                        </div>
+                      </div>
+                      <span style="font-weight: 800; font-size: 1rem; color: #1e293b;">{{ itm.subtotal | currency }}</span>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Order Action Buttons -->
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
+                <div style="font-size: 0.825rem; color: #64748b;">
+                  💡 Free replacement if plant arrives damaged in transit.
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                  <a href="{{ whatsapp_care_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="font-size: 0.825rem; border-color: #86efac; color: #15803d;" title="Ask Plant Doctor about this order on WhatsApp">
+                    💬 WhatsApp Care Support
                   </a>
                   {% if ord.order_status in ['Delivered', 'Shipped', 'Accepted'] %}
-                    <a href="{{ url_for('customer_claim_replacement', order_id=ord.id) }}" class="btn btn-sm" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-size: 0.78rem; padding: 4px 8px; font-weight: 600; text-decoration: none;" title="7-Day Transit Damage Replacement Claim">
-                      🌱 7-Day Claim
+                    <a href="{{ url_for('customer_claim_replacement', order_id=ord.id) }}" class="btn btn-sm" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-size: 0.825rem; font-weight: 700;" title="Claim replacement if damaged">
+                      🛡️ 7-Day Guarantee Claim
                     </a>
                   {% endif %}
                 </div>
               </div>
 
-              <!-- Order items preview -->
-              <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
-                {% for itm in items %}
-                  <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                      <img src="{{ itm.image_url }}" alt="{{ itm.plant_name }}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover;">
-                      <div>
-                        <h4 style="font-size: 0.9rem; font-weight: 700;">{{ itm.plant_name }}</h4>
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Qty: {{ itm.quantity }} × {{ itm.price | currency }}</span>
-                      </div>
-                    </div>
-                    <span style="font-weight: 700; font-size: 0.95rem;">{{ itm.subtotal | currency }}</span>
-                  </div>
-                {% endfor %}
-              </div>
-
-              <!-- Order summary footer -->
-              <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface-alt); padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.875rem;">
-                <span>Payment: <strong>{{ ord.payment_method }} ({{ ord.payment_status }})</strong></span>
-                <span>Grand Total: <strong style="color: var(--primary-dark); font-size: 1.05rem;">{{ ord.total_amount | currency }}</strong></span>
-              </div>
             </div>
           {% endfor %}
         </div>
       {% else %}
-        <div style="background: #ffffff; border: 1px dashed var(--border); border-radius: var(--radius); padding: 3rem; text-align: center;">
-          <i data-lucide="shopping-bag" style="width: 40px; height: 40px; color: var(--text-muted); margin: 0 auto 0.75rem auto;"></i>
-          <h3 style="font-size: 1.15rem; font-weight: 700;">No Orders Placed Yet</h3>
-          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Your green sanctuary awaits. Start browsing plants today!</p>
-          <a href="{{ url_for('catalog') }}" class="btn btn-primary btn-sm">Shop Catalog</a>
+        <div style="background: #ffffff; border: 1.5px dashed var(--border); border-radius: var(--radius-lg); padding: 4rem 2rem; text-align: center;">
+          <div style="width: 70px; height: 70px; border-radius: 50%; background: #f0fdf4; color: #15803d; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
+            <i data-lucide="package" style="width: 36px; height: 36px;"></i>
+          </div>
+          <h3 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">No Orders Placed Yet</h3>
+          <p style="color: #64748b; font-size: 0.95rem; max-width: 450px; margin: 0 auto 1.5rem auto;">
+            Malli orders place chesaka, Flipkart laaga meeku ikkade direct live tracking steps and progress chupisthundi!
+          </p>
+          <a href="{{ url_for('catalog') }}" class="btn btn-primary btn-md">
+            🌿 Shop Plants Now
+          </a>
         </div>
       {% endif %}
     </div>

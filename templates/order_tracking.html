@@ -200,9 +200,7 @@
 
       <!-- Customer Action Buttons: Print Invoice & Claim Replacement -->
       <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; flex-wrap: wrap;">
-        <a href="{{ url_for('customer_invoice', order_number=order.order_number) }}" target="_blank" class="btn btn-outline btn-sm">
-          <i data-lucide="printer" style="width: 15px;"></i> Download / Print Tax Invoice
-        </a>
+        
         <a href="{{ url_for('customer_claim_replacement', order_id=order.id) }}" class="btn btn-sm" style="background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
           <i data-lucide="shield-alert" style="width: 15px;"></i> Claim 7-Day Transit Replacement
         </a>
